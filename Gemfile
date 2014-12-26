@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 gem 'selenium-webdriver'
 
 # utilities
+gem 'i18n', '~> 0.7.0'
+gem 'activesupport'
 gem 'nokogiri'
 gem 'multi_json'
 gem 'ffaker'
