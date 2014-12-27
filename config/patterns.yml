@@ -1,13 +1,17 @@
 test_uris:
   # URLs that respond to HTTP GET
   - '/stuff.php'
-    platform: minibbs
+    platform: MiniBBS
     substring: 'Your personal settings'
   - '/member.php?action=register'
-    platform: mybb
+    platform: MyBB
     substring: 'Registration Agreement'
 
 platforms:
-  - minibbs:
-  - mybb:
+  - MiniBBS:
+    urls:
+      root: '/'
+  - MyBB:
+    urls:
+      root: '/'
 
