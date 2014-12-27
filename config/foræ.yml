@@ -1,0 +1,26 @@
+foræ:
+  - fqdn: example.org
+    secure: false
+    app_root: /
+    driver: :chrome
+    type: Test
+    log_to: STDOUT
+    log_level: :debug
+  - fqdn: test.minichan.org
+    secure: false
+    app_root: /
+    driver: :firefox
+    type: MiniBBS
+    log_level: :debug
+    waits:
+      new_thread: 60
+      new_reply: 15
+  - fqdn: minichan.org
+    secure: true
+    app_root: /
+    driver: :firefox
+    type: MiniBBS
+    log_level: :warn
+    waits:
+      new_thread: 60
+      new_reply: 15
