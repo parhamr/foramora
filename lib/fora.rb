@@ -2,6 +2,7 @@ require 'logging'
 require 'yaml'
 require 'highline/import'
 require 'curb'
+require 'selenium-webdriver'
 
 # An abstract representation of a fora
 class Fora
@@ -45,15 +46,15 @@ class Fora
     
     @driver      = Selenium::WebDriver.for options['driver']
     @client      = Curl::Easy.new
-    #@platform    = "Foræ::#{@fora['type']}".constantize.new
     # https?
     @secure      = options['secure']
     # only if it violates the norm (80 or 443)
     @port        = options['port']
     # path to the fora, from the fqdn (include forward slash)
     @app_root    = options['app_root']
+
+    @platform    = "Foræ::#{@fora['type']}".constantize.new(fora: self)
     logger.debug "Fora initialized! #{self.inspect}"
-    test
   end
 
   def teardown
@@ -62,8 +63,23 @@ class Fora
     driver.quit
   end
 
-  def cookies
-    driver.manage.all_cookies
+  def threads
+    platform.threads_at url_for(path: '')
+  end
+
+  def test
+    base_url = url_for(path: '')
+    logger.debug "Testing the #{fqdn} fora"
+    client.url = base_url.to_s
+    client.perform
+    if client.response_code >= 300
+      logger.error "HTTP code not as expected! (#{client.response_code})"
+    end
+    logger.info "#{client.status}"
+    logger.debug "#{client.header_str}"
+    driver.get base_url.to_s
+    logger.info "#{driver.title} (#{base_url})"
+    logger.debug "Cookies:\n" + cookies.map { |cookie| "\t#{cookie[:name]} => #{cookie[:value]}" }.join("\n")
   end
 
   protected
@@ -80,16 +96,8 @@ class Fora
     URI("#{scheme}://#{fqdn}#{port}#{app_root}#{options['path']}#{query}#{fragment}")
   end
 
-  def test
-    base_url = url_for(path: '')
-    logger.debug "Testing the #{fqdn} fora"
-    client.url = base_url.to_s
-    client.perform
-    logger.info "#{client.status}"
-    logger.debug "#{client.header_str}"
-    driver.get base_url.to_s
-    logger.info "#{driver.title} (#{base_url})"
-    logger.debug "Cookies:\n" + cookies.map { |cookie| "\t#{cookie[:name]} => #{cookie[:value]}" }.join("\n")
+  def cookies
+    driver.manage.all_cookies
   end
 
 end

@@ -11,12 +11,16 @@ require 'active_support/core_ext'
 require 'logging'
 
 # application code
-#require_relative "lib/foræ"
+require_relative "lib/foræ"
 require_relative "lib/fora"
 require_relative "lib/mora"
 
 @fora = Fora.select_application
-@mora = Mora.new()
+raise 'Fora not prepared!' unless @fora.present?
+#@fora.test
+@mora = Mora.new(fora: @fora)
+@mora.browse!
+#@more.create_thread!
 
 puts "Done! Cleaning up…"
 sleep 4
