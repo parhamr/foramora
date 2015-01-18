@@ -5,6 +5,9 @@ require_relative "config/fora_mora"
 
 # general bootstrap and utilities
 require 'rubygems'
+require 'bundler/setup'
+Bundler.setup(:default)
+
 require 'active_support'
 require 'active_support/time'
 require 'active_support/core_ext'

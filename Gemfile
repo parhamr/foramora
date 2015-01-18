@@ -16,3 +16,12 @@ gem 'sanitize'
 gem 'logging'
 gem 'launchy'
 gem 'highline'
+
+# testing
+group :test, :development do
+	gem 'rspec'
+  gem 'rspec-its' # adds support for "its" method in RSpec 3
+	gem 'guard'
+	gem 'guard-rspec'
+  gem 'listen'
+end
