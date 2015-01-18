@@ -12,15 +12,15 @@ class Fora
   # class
 
   def self.foræ
-    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yml')).result)['foræ']
+    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)['foræ']
   end
 
   def self.test_uris
-    @test_uris ||= YAML.load(ERB.new(File.binread('config/patterns.yml')).result)['test_uris']
+    @test_uris ||= YAML.load(ERB.new(File.binread('config/patterns.yaml')).result)['test_uris']
   end
 
   def self.platforms
-    @platforms ||= YAML.load(ERB.new(File.binread('config/patterns.yml')).result)['platforms']
+    @platforms ||= YAML.load(ERB.new(File.binread('config/patterns.yaml')).result)['platforms']
   end
 
   def self.select_application

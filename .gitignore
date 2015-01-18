@@ -16,7 +16,7 @@
 /lib/bundler/man/
 
 # configs
-config/forae.yml
+config/forae.yaml
 
 # ephemera
 *.cookie

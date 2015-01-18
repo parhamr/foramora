@@ -1,6 +1,7 @@
 test_uris:
   # URLs that respond to HTTP GET
-  - '/stuff.php'
+  -
+    '/stuff.php'
     platform: MiniBBS
     substring: 'Your personal settings'
   - '/member.php?action=register'
