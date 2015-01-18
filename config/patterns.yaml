@@ -1,18 +1,13 @@
-test_uris:
-  # URLs that respond to HTTP GET
-  -
-    '/stuff.php'
-    platform: MiniBBS
-    substring: 'Your personal settings'
-  - '/member.php?action=register'
-    platform: MyBB
-    substring: 'Registration Agreement'
-
 platforms:
-  - MiniBBS:
-    urls:
-      root: '/'
-  - MyBB:
-    urls:
-      root: '/'
-
+  - :name: 'MiniBBS'
+    :urls:
+      :root: '/'
+    :test:
+      :uri: '/stuff.php'
+      :substring: 'Your personal settings'
+  - :name: 'MyBB'
+    :urls:
+      :root: '/'
+    :test:
+      :uri: '/member.php?action=register'
+      :substring: 'Registration Agreement'

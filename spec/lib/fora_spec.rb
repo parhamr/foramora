@@ -7,8 +7,8 @@ describe Fora do
     subject { Fora }
 
     its(:foræ) { should be_an Array }
-    its(:test_uris) { should be_a Hash }
-    its(:platforms) { should be_a Hash }
+    its(:platforms) { should be_an Array }
+    its(:test_uris) { should be_an Array }
   end
 
   describe '[instance]' do

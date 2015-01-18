@@ -15,12 +15,12 @@ class Fora
     @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)['foræ']
   end
 
-  def self.test_uris
-    @test_uris ||= YAML.load(ERB.new(File.binread('config/patterns.yaml')).result)['test_uris']
-  end
-
   def self.platforms
     @platforms ||= YAML.load(ERB.new(File.binread('config/patterns.yaml')).result)['platforms']
+  end
+
+  def self.test_uris
+    @test_uris ||= platforms.map { |p| p[:test].merge(name: p[:name]) }
   end
 
   def self.select_application
