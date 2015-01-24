@@ -2,6 +2,6 @@
 require_relative 'default'
 
 module Foræ
-  class MiniBBS < Default
+  class Test < Default
   end
 end

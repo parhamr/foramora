@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gem 'selenium-webdriver'
 
 # utilities
+gem 'rake'
 gem 'i18n', '~> 0.7.0'
 gem 'activesupport'
 gem 'curb'
@@ -19,9 +20,9 @@ gem 'highline'
 
 # testing
 group :test, :development do
-	gem 'rspec'
+  gem 'guard'
+  gem 'guard-rspec'
   gem 'rspec-its' # adds support for "its" method in RSpec 3
-	gem 'guard'
-	gem 'guard-rspec'
   gem 'listen'
+  gem 'guard-rubocop'
 end

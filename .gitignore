@@ -21,3 +21,6 @@ config/foræ.yaml
 # ephemera
 *.cookie
 *.tmp
+
+!.gitkeep
+log/

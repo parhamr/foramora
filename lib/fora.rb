@@ -6,8 +6,14 @@ require 'selenium-webdriver'
 
 # An abstract representation of a fora
 class Fora
-
-  attr_accessor :logger, :client, :driver, :fora, :fqdn, :secure, :platform, :app_root
+  attr_accessor :app_root,
+    :logger,
+    :client,
+    :driver,
+    :fora,
+    :fqdn,
+    :platform,
+    :secure
 
   # class
 
@@ -16,7 +22,7 @@ class Fora
   end
 
   def self.platforms
-    @platforms ||= YAML.load(ERB.new(File.binread('config/patterns.yaml')).result)['platforms']
+    @platforms ||= YAML.load(ERB.new(File.binread('config/patterns.yaml')).result)[:platforms]
   end
 
   def self.test_uris
@@ -24,8 +30,8 @@ class Fora
   end
 
   def self.select_application
-    puts "Available foræ:\n\t#{self.foræ.each_with_index.map{|f,i| "#{i}) #{f['fqdn']}"}.join("\n\t")}"
-    selection = ask("Which fora would you like to use? ", Integer) do |q|
+    puts "Available foræ:\n\t#{self.foræ.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
+    selection = ask('Which fora would you like to use? ', Integer) do |q|
       q.in = (0..(foræ.length - 1))
     end
     new(foræ[selection])
@@ -34,27 +40,26 @@ class Fora
   # instance
 
   def initialize(*args)
-    options      = args.extract_options!
+    options      = args.extract_options!.with_indifferent_access
     # subdomain, domain, tld
-    @fqdn        = options['fqdn']
+    @fqdn        = options[:fqdn]
     # remember the main configuration object
-    @fora        = self.class.foræ.detect { |f| f['fqdn'] == fqdn }
+    @fora        = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
     raise 'Fora not found!' if @fora.blank?
-    
-    @logger      = Logging.logger (@fora['log_to'].present? ? @fora['log_to'] : STDOUT)
-    logger.level = (@fora['log_level'].present? ? @fora['log_level'] : :warn)
-    
-    @driver      = Selenium::WebDriver.for options['driver']
+    @logger      = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
+    logger.level = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
+    @driver      = Selenium::WebDriver.for options[:driver]
     @client      = Curl::Easy.new
     # https?
-    @secure      = options['secure']
+    @secure      = options[:secure]
     # only if it violates the norm (80 or 443)
-    @port        = options['port']
+    @port        = options[:port]
     # path to the fora, from the fqdn (include forward slash)
-    @app_root    = options['app_root']
+    @app_root    = options[:app_root]
 
-    @platform    = "Foræ::#{@fora['type']}".constantize.new(fora: self)
-    logger.debug "Fora initialized! #{self.inspect}"
+    require_relative "foræ/#{@fora[:type].underscore.downcase}"
+    @platform    = "Foræ::#{@fora[:type]}".constantize.new(fora: self)
+    logger.debug "Fora initialized! #{inspect}"
   end
 
   def teardown
@@ -63,8 +68,8 @@ class Fora
     driver.quit
   end
 
-  def threads
-    platform.threads_at url_for(path: '')
+  def topics
+    platform.topics_at url_for(path: '')
   end
 
   def test
@@ -75,8 +80,8 @@ class Fora
     if client.response_code >= 300
       logger.error "HTTP code not as expected! (#{client.response_code})"
     end
-    logger.info "#{client.status}"
-    logger.debug "#{client.header_str}"
+    logger.info client.status.to_s
+    logger.debug client.header_str.to_s
     driver.get base_url.to_s
     logger.info "#{driver.title} (#{base_url})"
     logger.debug "Cookies:\n" + cookies.map { |cookie| "\t#{cookie[:name]} => #{cookie[:value]}" }.join("\n")
@@ -85,19 +90,23 @@ class Fora
   protected
 
   def url_for(*args)
-    options  = args.extract_options!
-    scheme   = secure ? 'https' : 'http'
+    options  = args.extract_options!.with_indifferent_access
     # leading colon
-    port     = options['port'].blank? ? nil : ":#{options['port']}"
+    port     = options[:port].blank? ? nil : ":#{options[:port]}"
     # leading question mark
-    query    = options['query'].blank? ? nil : "?#{options['query']}"
+    query    = options[:query].blank? ? nil : "?#{options[:query]}"
     # leading octothorpe
-    fragment = options['fragment'].blank? ? nil : "##{options['fragment']}"
-    URI("#{scheme}://#{fqdn}#{port}#{app_root}#{options['path']}#{query}#{fragment}")
+    fragment = options[:fragment].blank? ? nil : "##{options[:fragment]}"
+    URI("#{scheme}://#{fqdn}#{port}#{app_root}#{options[:path]}#{query}#{fragment}")
   end
 
   def cookies
     driver.manage.all_cookies
   end
 
+  private
+
+  def url_scheme
+    secure ? 'https' : 'http'
+  end
 end
