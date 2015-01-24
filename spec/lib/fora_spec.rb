@@ -17,11 +17,18 @@ describe Fora do
       subject.try(:teardown)
     end
 
-    context 'with valid options' do
-      subject { Fora.new(valid_options) }
+    context 'with selenium disabled' do
 
-      it 'successfully initializes' do
-        expect { subject }.to_not raise_error
+      before do
+        expect(Selenium::WebDriver).to receive(:for).and_return(true)
+      end
+
+      context 'with valid options' do
+        subject { Fora.new(valid_options) }
+
+        it 'successfully initializes' do
+          expect { subject }.to_not raise_error
+        end
       end
     end
   end

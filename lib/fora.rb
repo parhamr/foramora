@@ -65,7 +65,7 @@ class Fora
   def teardown
     logger.debug "Tearing down the #{fqdn} fora…"
     client.close
-    driver.quit
+    driver.try(:quit)
   end
 
   def topics
