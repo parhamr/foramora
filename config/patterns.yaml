@@ -4,10 +4,12 @@
       :root: '/'
     :test:
       :uri: '/stuff.php'
+      # NOTE: Regexp allowed
       :substring: 'Your personal settings'
   - :name: 'MyBB'
     :urls:
       :root: '/'
     :test:
       :uri: '/member.php?action=register'
+      # NOTE: Regexp allowed
       :substring: 'Registration Agreement'

@@ -29,9 +29,10 @@ class Fora
     @test_uris ||= platforms.map { |p| p[:test].merge(name: p[:name]) }
   end
 
-  def self.select_application
+  def self.select_target
     puts "Available foræ:\n\t#{self.foræ.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
     selection = ask('Which fora would you like to use? ', Integer) do |q|
+      # validates response is within bounds
       q.in = (0..(foræ.length - 1))
     end
     new(foræ[selection])
@@ -64,11 +65,13 @@ class Fora
 
   def teardown
     logger.debug "Tearing down the #{fqdn} fora…"
-    client.close
+    client.try(:close)
     driver.try(:quit)
   end
 
+  # interface only; the platform is the source of authority
   def topics
+    # NOTE: root url
     platform.topics_at url_for(path: '')
   end
 
@@ -76,12 +79,19 @@ class Fora
     base_url = url_for(path: '')
     logger.debug "Testing the #{fqdn} fora"
     client.url = base_url.to_s
-    client.perform
-    if client.response_code >= 300
-      logger.error "HTTP code not as expected! (#{client.response_code})"
+    begin
+      # this is network library code; it MUST be rescued
+      client.perform
+      if client.response_code >= 300
+        logger.error "HTTP code not as expected! (#{client.response_code})"
+      end
+    rescue => e
+      # log the problem and move on
+      logger.fatal "#{e.class}: #{e.message} (#{e.backtrace[0]})"
     end
     logger.info client.status.to_s
     logger.debug client.header_str.to_s
+    # REVIEW: this netcode might need to be rescued
     driver.get base_url.to_s
     logger.info "#{driver.title} (#{base_url})"
     logger.debug "Cookies:\n" + cookies.map { |cookie| "\t#{cookie[:name]} => #{cookie[:value]}" }.join("\n")

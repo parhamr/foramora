@@ -18,7 +18,6 @@ describe Fora do
     end
 
     context 'with selenium disabled' do
-
       before do
         expect(Selenium::WebDriver).to receive(:for).and_return(true)
       end

@@ -115,9 +115,9 @@ Style/AsciiIdentifiers:
 
 # Metrics!
 
-# this code is procedural; higher limits than default!
+# this code is procedural; many methods will be complex
 Metrics/AbcSize:
-  Max: 45
+  Enabled: false
 
 Metrics/ClassLength:
   Max: 250

@@ -18,7 +18,7 @@ require_relative 'lib/foræ'
 require_relative 'lib/fora'
 require_relative 'lib/mora'
 
-@fora = Fora.select_application
+@fora = Fora.select_target
 raise 'Fora not prepared!' unless @fora.present?
 # @fora.test
 @mora = Mora.new(fora: @fora)

@@ -10,7 +10,7 @@ module Foræ
     end
 
     def driver
-      fora.driver
+      fora.try(:driver)
     end
 
     def topics_at(url)
