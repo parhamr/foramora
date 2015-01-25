@@ -8,6 +8,8 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
+.DS_Store
+*.swp
 
 ## Environment normalisation:
 /.bundle/
@@ -19,3 +21,6 @@ config/foræ.yaml
 # ephemera
 *.cookie
 *.tmp
+
+!.gitkeep
+log/
