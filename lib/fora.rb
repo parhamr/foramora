@@ -22,7 +22,7 @@ class Fora
   # class
 
   def self.foræ
-    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)['foræ']
+    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)[:foræ]
   end
 
   def self.platforms
@@ -61,7 +61,7 @@ class Fora
     # path to the fora, from the fqdn (include forward slash)
     @app_root      = options[:app_root]
 
-    @dom_selectors = options.fetch(:dom_selectors, {})
+    @dom_selectors = options.fetch(:dom_selectors, {}).try(:with_indifferent_access)
 
     begin
       require_relative "foræ/#{@fora[:type].underscore.downcase}"
@@ -83,25 +83,24 @@ class Fora
       response = if fora.fetch(:cookies_auto_load, true)
                    'yes'
                  else
-                   puts "Available cookies:\n\t#{fora[:cookies].map { |k,v| "#{k}: #{v}" }.join("\n\t")}"
-                   # note that the default is yes
+                   puts "Available cookies:\n\t#{fora[:cookies].map { |k, v| "#{k}: #{v}" }.join("\n\t")}"
+                   # NOTE: the default is yes
                    ask('Load these cookies? (Y/n)', String)
                  end
       if response.blank? || response =~ /y/i
-        logger.info "Adding cookies..."
+        logger.info 'Adding cookies...'
         # Selenium requires you to be on the domain when adding cookies for it
         visit ''
-        fora[:cookies].each do |k,v|
+        fora[:cookies].each do |k, v|
           driver.manage.add_cookie(name: k.to_s, value: v.to_s, path: '/')
         end
         visit ''
       else
-        logger.info "Discarding cookies."
+        logger.info 'Discarding cookies.'
       end
     end
     true
   end
-
 
   def teardown
     logger.info "Tearing down the #{fqdn} fora…"

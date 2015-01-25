@@ -132,7 +132,7 @@ Metrics/LineLength:
 # this code is procedural; higher limits than default!
 Metrics/MethodLength:
   CountComments: false  # count full line comments?
-  Max: 30
+  Max: 40
 
 # this code is procedural; higher limits than default!
 Metrics/PerceivedComplexity:

@@ -8,7 +8,6 @@ module Foræ
       :my_replies_selector,
       :replies_to_me_selector
 
-
     def initialize(*args)
       options = args.extract_options!
       @fora = options[:fora]
@@ -22,11 +21,11 @@ module Foræ
     def topics_at(url)
       logger.info 'Finding current topics...'
       visit(url)
-      topic_elements = if @fora.dom_selectors.blank?
+      topic_elements = if topics_links_selector.blank?
                          logger.warn "zero DOM selectors defined for #{@fora.fqdn}!"
                          []
                        else
-                         driver.find_elements :css, @fora.dom_selectors[:topics_links]
+                         call_driver_finder(topics_links_selector)
                        end
       store_topics(topic_elements)
     end
@@ -54,11 +53,8 @@ module Foræ
         logger.warn "No XPath selectors found for 'my topic'"
         nil
       else
-        driver.find_element(:xpath, my_topic_selectors)
+        call_driver_finder(my_replies_selector)
       end
-    rescue Selenium::WebDriver::Error::InvalidSelectorError => e
-      logger.error "#{e.class}: #{e.message}"
-      nil
     end
 
     # selection from current page of replies written by me
@@ -67,11 +63,8 @@ module Foræ
         logger.warn "No XPath selectors found for 'my replies'"
         []
       else
-        driver.find_elements(:xpath, my_topic_selectors)
+        call_driver_finder(my_replies_selector)
       end
-    rescue Selenium::WebDriver::Error::InvalidSelectorError => e
-      logger.error "#{e.class}: #{e.message}"
-      []
     end
 
     # selection from current page of replies written toward me
@@ -80,11 +73,8 @@ module Foræ
         logger.warn "No XPath selectors found for 'my topic'"
         []
       else
-        driver.find_elements(:xpath, my_topic_selectors)
+        call_driver_finder(replies_to_me_selector)
       end
-    rescue Selenium::WebDriver::Error::InvalidSelectorError => e
-      logger.error "#{e.class}: #{e.message}"
-      []
     end
 
     protected
@@ -115,16 +105,60 @@ module Foræ
       topic_elements
     end
 
+    def topics_links_selector
+      @topics_links_selector ||= fora.dom_selectors.fetch(:topics_links, {}).try(:with_indifferent_access)
+    end
+
     def my_topic_selector
-      @my_topic_selector ||= fora.dom_selectors.fetch(:my_topic, '')
+      @my_topic_selector ||= fora.dom_selectors.fetch(:my_topic, {}).try(:with_indifferent_access)
     end
 
     def my_replies_selector
-      @my_replies_selector ||= fora.dom_selectors.fetch(:my_replies, '')
+      @my_replies_selector ||= fora.dom_selectors.fetch(:my_replies, {}).try(:with_indifferent_access)
     end
 
     def replies_to_me_selector
-      @replies_to_me_selector ||= fora.dom_selectors.fetch(:my_topic, '')
+      @replies_to_me_selector ||= fora.dom_selectors.fetch(:replies_to_me, {}).try(:with_indifferent_access)
+    end
+
+    private
+
+    def call_driver_finder(selector_config)
+      logger.debug "#call_driver_finder called with: #{selector_config.inspect}"
+      unless selector_config.respond_to?(:fetch)
+        raise ArgumentError, "Options should respond to #fetch; class #{selector_config.class} does not"
+      end
+      search_type = selector_config.fetch(:type, :css)
+      logger.debug "search_type: #{search_type.inspect}"
+      search_expression = selector_config.fetch(:expression, nil)
+      logger.debug "search_expression: #{search_expression.inspect}"
+      search_returns = selector_config.fetch(:returns, :many)
+      logger.debug "search_returns: #{search_returns.inspect}"
+      case search_expression
+      when Array
+        # minor recursion!
+        search_expression.each do |e|
+          call_driver_finder(
+            type:       search_type,
+            expression: e.to_s,
+            returns:    search_returns
+          )
+        end
+      when String
+        case search_returns
+        when :one
+          driver.find_element(search_type, search_expression)
+        when :many
+          driver.find_elements(search_type, search_expression)
+        else
+          raise ArgumentError, "Invalid :returns received (:one or :many expected): #{search_returns.inspect}"
+        end
+      else
+        raise ArgumentError, "Invalid expression received (Array or String expected): #{selector_config.inspect}"
+      end
+    rescue Selenium::WebDriver::Error::InvalidSelectorError => e
+      logger.error "#{e.class}: #{e.message}"
+      nil
     end
   end
 end
