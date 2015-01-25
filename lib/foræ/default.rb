@@ -128,6 +128,7 @@ module Foræ
       unless selector_config.respond_to?(:fetch)
         raise ArgumentError, "Options should respond to #fetch; class #{selector_config.class} does not"
       end
+      # TODO: validate expression when type is :xpath?
       search_type = selector_config.fetch(:type, :css)
       logger.debug "search_type: #{search_type.inspect}"
       search_expression = selector_config.fetch(:expression, nil)
