@@ -1,6 +1,6 @@
 # Fora Mora
 
-Mostly object oriented, this code uses procedural methods to interact with websites through a browser.
+This code uses classes to group concerns and procedural methods to interact with websites through a browser.
 
 ## Setup
 
@@ -11,6 +11,12 @@ Once Rubygems is installed, install application dependencies with these commands
 ```bash
 gem install bundler
 bundle
+```
+
+Use the example foræ YAML to build your own fora definitions.
+
+```bash
+mv config/foræ.example.yaml config/foræ.yaml
 ```
 
 ## Run it!
