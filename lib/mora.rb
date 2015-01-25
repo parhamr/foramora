@@ -27,6 +27,7 @@ class Mora
   end
 
   # Clicks around for a configurable wait period
+  # REVIEW: do these procedural things belong in a scripting layer? this isn't a concern of the mora
   def browse!
     logger.info 'Browsing!'
     started_at = Time.now.utc
