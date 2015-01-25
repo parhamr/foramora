@@ -8,10 +8,8 @@ require 'rubygems'
 require 'bundler/setup'
 Bundler.setup(:default)
 
-require 'active_support'
-require 'active_support/time'
-require 'active_support/core_ext'
-require 'logging'
+# when debugging!
+require 'pry'
 
 # application code
 require_relative 'lib/foræ'
@@ -20,7 +18,6 @@ require_relative 'lib/mora'
 
 @fora = Fora.select_target
 raise 'Fora not prepared!' unless @fora.present?
-# @fora.test
 @mora = Mora.new(fora: @fora)
 @mora.simulate!
 

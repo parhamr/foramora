@@ -10,7 +10,7 @@ gem 'activesupport'
 gem 'curb'
 gem 'nokogiri'
 gem 'multi_json'
-gem 'ffaker'
+gem 'faker'
 gem 'sanitize'
 
 # localhost stuff
@@ -20,6 +20,7 @@ gem 'highline'
 
 # testing
 group :test, :development do
+  gem 'pry'
   gem 'guard'
   gem 'guard-rspec'
   gem 'rspec-its' # adds support for "its" method in RSpec 3

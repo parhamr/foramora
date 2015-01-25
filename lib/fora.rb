@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/time'
+require 'active_support/core_ext'
 require 'logging'
 require 'yaml'
 require 'highline/import'
@@ -67,9 +70,38 @@ class Fora
       teardown
       false
     end
+
     @platform      = "Foræ::#{@fora[:type]}".constantize.new(fora: self)
     logger.debug "Fora initialized! #{inspect}"
+    test if fora.fetch(:test_on_init, false)
+    optionally_load_cookies
   end
+
+  def optionally_load_cookies
+    if fora.fetch(:cookies, {}).present?
+      # default is to load cookies if present
+      response = if fora.fetch(:cookies_auto_load, true)
+                   'yes'
+                 else
+                   puts "Available cookies:\n\t#{fora[:cookies].map { |k,v| "#{k}: #{v}" }.join("\n\t")}"
+                   # note that the default is yes
+                   ask('Load these cookies? (Y/n)', String)
+                 end
+      if response.blank? || response =~ /y/i
+        logger.info "Adding cookies..."
+        # Selenium requires you to be on the domain when adding cookies for it
+        visit ''
+        fora[:cookies].each do |k,v|
+          driver.manage.add_cookie(name: k.to_s, value: v.to_s, path: '/')
+        end
+        visit ''
+      else
+        logger.info "Discarding cookies."
+      end
+    end
+    true
+  end
+
 
   def teardown
     logger.info "Tearing down the #{fqdn} fora…"
@@ -91,18 +123,20 @@ class Fora
   end
 
   # interface only; the platform is the source of authority
-  def topics(path=nil)
+  def topics(path = nil)
     # NOTE: root url
     platform.topics_at url_for(path: path.to_s)
   end
 
-  def visit(path=nil)
+  def visit(path = nil)
     platform.visit url_for(path: path.to_s)
   end
 
-  def visit_random_topic
-    platform.visit_random_topic
-  end
+  delegate :visit_random_topic, to: :platform, allow_nil: true
+  delegate :start_new_topic, to: :platform, allow_nil: true
+  delegate :viewing_my_topic?, to: :platform, allow_nil: true
+  delegate :my_replies, to: :platform, allow_nil: true
+  delegate :replies_to_me, to: :platform, allow_nil: true
 
   def wait_times
     @wait_times ||= @fora.fetch(:waits, {})

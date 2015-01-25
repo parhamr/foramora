@@ -19,7 +19,8 @@ GEM
     crass (1.0.1)
     curb (0.8.6)
     diff-lcs (1.2.5)
-    ffaker (1.25.0)
+    faker (1.4.3)
+      i18n (~> 0.5)
     ffi (1.9.6)
     formatador (0.2.5)
     guard (2.11.1)
@@ -124,7 +125,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   curb
-  ffaker
+  faker
   guard
   guard-rspec
   guard-rubocop
@@ -135,6 +136,7 @@ DEPENDENCIES
   logging
   multi_json
   nokogiri
+  pry
   rake
   rspec-its
   sanitize
