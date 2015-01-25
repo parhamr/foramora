@@ -13,6 +13,12 @@ gem install bundler
 bundle
 ```
 
+Use the example foræ YAML to build your own fora definitions.
+
+```bash
+mv config/foræ.example.yaml config/foræ.yaml
+```
+
 ## Run it!
 
 `ruby fora_mora.rb`
