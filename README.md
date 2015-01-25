@@ -2,6 +2,8 @@
 
 This code uses classes to group concerns and procedural methods to interact with websites through a browser.
 
+It has been developed and tested on OS X; Linux and Unix variants should just work. Windows is not currently supported.
+
 ## Setup
 
 Dependencies: Ruby (see `.ruby-version` for version), Rubygems, curl, and libraries supporting the gems
@@ -30,5 +32,7 @@ TDD support:
 `bundle exec guard`
 
 ## Testing
+
+Run the suite with this command:
 
 `rake spec`

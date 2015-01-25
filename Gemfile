@@ -20,7 +20,8 @@ gem 'highline'
 
 # testing
 group :test, :development do
-  gem 'pry'
+  gem 'pry' # when debugging
+  gem 'factory_girl'
   gem 'guard'
   gem 'guard-rspec'
   gem 'rspec-its' # adds support for "its" method in RSpec 3

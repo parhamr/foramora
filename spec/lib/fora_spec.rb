@@ -22,6 +22,12 @@ describe Fora do
       it 'successfully initializes' do
         expect { subject }.to_not raise_error
       end
+
+      describe '#topics' do
+        it 'is Array' do
+          expect(subject.topics).to be_an Array
+        end
+      end
     end
   end
 end
