@@ -22,8 +22,7 @@ require_relative 'lib/mora'
 raise 'Fora not prepared!' unless @fora.present?
 # @fora.test
 @mora = Mora.new(fora: @fora)
-@mora.browse!
-# @more.create_thread!
+@mora.simulate!
 
 puts 'Done! Cleaning up…'
 sleep 4

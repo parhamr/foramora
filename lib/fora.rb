@@ -10,6 +10,7 @@ class Fora
     :logger,
     :client,
     :driver,
+    :dom_selectors,
     :fora,
     :fqdn,
     :platform,
@@ -41,38 +42,70 @@ class Fora
   # instance
 
   def initialize(*args)
-    options      = args.extract_options!.with_indifferent_access
+    options        = args.extract_options!.with_indifferent_access
     # subdomain, domain, tld
-    @fqdn        = options[:fqdn]
+    @fqdn          = options[:fqdn]
     # remember the main configuration object
-    @fora        = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
+    @fora          = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
     raise 'Fora not found!' if @fora.blank?
-    @logger      = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
-    logger.level = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
-    @driver      = Selenium::WebDriver.for options[:driver]
-    @client      = Curl::Easy.new
+    @logger        = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
+    logger.level   = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
+    @driver        = Selenium::WebDriver.for options[:driver]
     # https?
-    @secure      = options[:secure]
+    @secure        = options[:secure]
     # only if it violates the norm (80 or 443)
-    @port        = options[:port]
+    @port          = options[:port]
     # path to the fora, from the fqdn (include forward slash)
-    @app_root    = options[:app_root]
+    @app_root      = options[:app_root]
 
-    require_relative "foræ/#{@fora[:type].underscore.downcase}"
-    @platform    = "Foræ::#{@fora[:type]}".constantize.new(fora: self)
+    @dom_selectors = options.fetch(:dom_selectors, {})
+
+    begin
+      require_relative "foræ/#{@fora[:type].underscore.downcase}"
+    rescue LoadError => e
+      logger.error "#{e.class}: #{e.message} (#{e.backtrace[0]})"
+      teardown
+      false
+    end
+    @platform      = "Foræ::#{@fora[:type]}".constantize.new(fora: self)
     logger.debug "Fora initialized! #{inspect}"
   end
 
   def teardown
-    logger.debug "Tearing down the #{fqdn} fora…"
+    logger.info "Tearing down the #{fqdn} fora…"
     client.try(:close)
     driver.try(:quit)
+    # always return true
+    true
+  end
+
+  def url_for(*args)
+    options  = args.extract_options!.with_indifferent_access
+    # leading colon
+    port     = options[:port].blank? ? nil : ":#{options[:port]}"
+    # leading question mark
+    query    = options[:query].blank? ? nil : "?#{options[:query]}"
+    # leading octothorpe
+    fragment = options[:fragment].blank? ? nil : "##{options[:fragment]}"
+    URI("#{url_scheme}://#{fqdn}#{port}#{app_root}#{options[:path]}#{query}#{fragment}")
   end
 
   # interface only; the platform is the source of authority
-  def topics
+  def topics(path=nil)
     # NOTE: root url
-    platform.topics_at url_for(path: '')
+    platform.topics_at url_for(path: path.to_s)
+  end
+
+  def visit(path=nil)
+    platform.visit url_for(path: path.to_s)
+  end
+
+  def visit_random_topic
+    platform.visit_random_topic
+  end
+
+  def wait_times
+    @wait_times ||= @fora.fetch(:waits, {})
   end
 
   def test
@@ -99,15 +132,8 @@ class Fora
 
   protected
 
-  def url_for(*args)
-    options  = args.extract_options!.with_indifferent_access
-    # leading colon
-    port     = options[:port].blank? ? nil : ":#{options[:port]}"
-    # leading question mark
-    query    = options[:query].blank? ? nil : "?#{options[:query]}"
-    # leading octothorpe
-    fragment = options[:fragment].blank? ? nil : "##{options[:fragment]}"
-    URI("#{scheme}://#{fqdn}#{port}#{app_root}#{options[:path]}#{query}#{fragment}")
+  def client
+    @client ||= Curl::Easy.new
   end
 
   def cookies
