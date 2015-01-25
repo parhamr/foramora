@@ -1,6 +1,6 @@
 # Fora Mora
 
-Mostly object oriented, this code uses procedural methods to interact with websites through a browser.
+This code uses classes to group concerns and procedural methods to interact with websites through a browser.
 
 ## Setup
 
