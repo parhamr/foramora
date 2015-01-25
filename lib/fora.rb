@@ -58,8 +58,17 @@ class Fora
     # path to the fora, from the fqdn (include forward slash)
     @app_root    = options[:app_root]
 
-    require_relative "foræ/#{@fora[:type].underscore.downcase}"
-    @platform    = "Foræ::#{@fora[:type]}".constantize.new(fora: self)
+    @dom_selectors = options.fetch(:dom_selectors, {}).try(:with_indifferent_access)
+
+    begin
+      require_relative "foræ/#{@fora[:platform_type].underscore.downcase}"
+    rescue LoadError => e
+      logger.error "#{e.class}: #{e.message} (#{e.backtrace[0]})"
+      teardown
+      false
+    end
+
+    @platform      = "Foræ::#{@fora[:platform_type]}".constantize.new(fora: self)
     logger.debug "Fora initialized! #{inspect}"
   end
 
