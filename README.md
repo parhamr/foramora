@@ -1,6 +1,6 @@
 # Fora Mora
 
-This code uses classes to group concerns and procedural methods to interact with websites through a browser.
+Automated forum interaction tools. This application models forums, their users, and the contents with classes. There are subclasses to abstract common interfaces for various forum platforms. Much of the code is procedural.
 
 It has been developed and tested on OS X; Linux and Unix variants should just work. Windows is not currently supported.
 
