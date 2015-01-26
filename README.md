@@ -2,6 +2,8 @@
 
 Automated forum interaction tools. This application models forums, their users, and the contents with classes. There are subclasses to abstract common interfaces for various forum platforms. Much of the code is procedural.
 
+The application is in very early stages and no support is offered or implied.
+
 It has been developed and tested on OS X; Linux and Unix variants should just work. Windows is not currently supported.
 
 ## Setup
