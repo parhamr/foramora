@@ -2,6 +2,8 @@ require 'faker'
 
 #
 class Mora
+  include ::ActionView::Helpers::TextHelper
+
   attr_accessor :browsing_history,
     :created_at,
     :fora,
@@ -11,7 +13,7 @@ class Mora
 
   # FIXME: move to configurables
   FORA_BROWSING_PERIOD = 120
-  TOPIC_READING_PERIOD = 2
+  TOPIC_READING_PERIOD = 1
 
   def initialize(*args)
     options = args.extract_options!
@@ -36,25 +38,21 @@ class Mora
     if (topics = fora.topics('')).present?
       browsing_history << fora.driver.current_url
     end
+    starting_page_count = browsing_history.length
     if topics.empty?
       logger.warn 'Zero topics found!'
     else
-      starting_page_count = browsing_history.length
-      logger.info "Current topics, default sort:\n#{topics.map { |t| "\t#{t.text}" }.join("\n")}"
-      logger.info "Browsing until #{ends_at}"
+      logger.debug "Current topics, default sort:\n#{topics.map { |t| "\t#{t.text}" }.join("\n")}"
+      logger.warn "Browsing until #{ends_at}"
       # browse for this period
       while ends_at > Time.now.utc
+        # NOTE: network call, this can raise exception
         fora.visit_random_topic
         browsing_history << fora.driver.current_url
-        logger.debug "Reading for #{TOPIC_READING_PERIOD} seconds..."
-        logger.info "viewing_my_topic? #{fora.viewing_my_topic?.inspect}"
-        logger.info "my_replies: #{fora.my_replies.length}"
-        logger.info "replies_to_me: #{fora.replies_to_me.length}"
-        binding.pry
-        sleep TOPIC_READING_PERIOD
+        read_this_page
       end
       logger.info 'Browsing completed!'
-      logger.debug "URLs visited in #{FORA_BROWSING_PERIOD} seconds: #{browsing_history.length - starting_page_count}"
+      logger.info "URLs visited in #{FORA_BROWSING_PERIOD} seconds: #{browsing_history.length - starting_page_count}"
       logger.debug "Browsing history:\n#{browsing_history.inspect}"
     end
     true
@@ -65,6 +63,66 @@ class Mora
     fora.post_new_topic
   end
 
-  def reply!
+  def reply!(options = {})
+  end
+
+  def read_this_page
+    start_time = Time.now.utc.to_f
+    logger.debug 'Reading current page...'
+    unless topic_is_locked?
+      viewing_my_topic?
+      check_my_replies
+    end
+    elapsed_time = (Time.now.utc.to_f - start_time)
+    logger.info "Page took #{pluralize(elapsed_time, 'second')} to read."
+    if elapsed_time < TOPIC_READING_PERIOD
+      sleep_time = TOPIC_READING_PERIOD - elapsed_time
+      logger.debug "Continuing to read for #{pluralize(sleep_time, 'second')}"
+      sleep sleep_time
+    end
+  end
+
+  def topic_is_locked?
+    fora.topic_is_locked?
+  end
+
+  def viewing_a_topic_page?
+    fora.viewing_a_topic?
+  end
+
+  def viewing_my_topic?
+    logger.debug 'Viewing my topic?'
+    if (my_topic = fora.viewing_my_topic?)
+      logger.info 'This is my topic!'
+      true
+    else
+      logger.info 'This is not my topic.'
+      false
+    end
+  end
+
+  def check_my_replies
+    if fora.topic_is_locked?
+      logger.warn 'Topic is locked!'
+    else
+      # NOTE: my_replies is not a cached lookup
+      my_replies = fora.my_replies.dup
+      # NOTE: replies_to_me is not a cached lookup
+      replies_to_me = fora.replies_to_me.dup
+      logger.info "Replies in this topic written by me: #{my_replies.try(:length).to_i}"
+      logger.info "Replies in this topic addressed to me: #{replies_to_me.try(:length).to_i}"
+      if my_replies.try(:length).to_i > 0
+        # what to do about my replies?
+      end
+      if replies_to_me.try(:length).to_i > 0
+        # TODO: continue the conversation?
+        # binding.pry
+      end
+    end
+    true
+  end
+
+  def locked_topic?
+    false
   end
 end

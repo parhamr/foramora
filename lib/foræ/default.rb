@@ -4,7 +4,10 @@ module Foræ
     attr_accessor :fora,
       :known_topics,
       :logger,
-      :my_topic_selectors,
+      :indices,
+      :topic_page_selector,
+      :locked_topic_selector,
+      :my_topic_selector,
       :my_replies_selector,
       :replies_to_me_selector
 
@@ -47,18 +50,61 @@ module Foræ
     def start_new_topic
     end
 
+    def viewing_a_topic?
+      logger.info 'Checking if this is a topic...'
+      topic_element = if topic_page_selector.blank?
+                        logger.warn "No XPath selectors found for 'topic page'"
+                        nil
+                      else
+                        call_driver_finder(topic_page_selector)
+                      end
+      if topic_element.present?
+        logger.info 'This is a topic!'
+        true
+      else
+        logger.info 'Not viewing a topic page.'
+        false
+      end
+    end
+
+    def topic_is_locked?
+      locked_topic_element = if viewing_a_topic?
+                               logger.info 'Checking if this topic is locked...'
+                               if locked_topic_selector.blank?
+                                 logger.warn "No XPath selectors found for 'locked topic'"
+                                 false
+                               else
+                                 call_driver_finder(locked_topic_selector)
+                               end
+                             else
+                               nil
+                             end
+      if locked_topic_element.present?
+        logger.warn 'This is a locked topic.'
+        true
+      elsif locked_topic_element.nil?
+        logger.warn 'This might not be a topic page.'
+        true
+      else
+        logger.warn 'This topic is not locked.'
+        false
+      end
+    end
+
     # does the current page show I am the author?
     def viewing_my_topic?
-      if my_topic_selectors.blank?
+      logger.info 'Checking if this is my topic...'
+      if my_topic_selector.blank?
         logger.warn "No XPath selectors found for 'my topic'"
         nil
       else
-        call_driver_finder(my_replies_selector)
+        call_driver_finder(my_topic_selector)
       end
     end
 
     # selection from current page of replies written by me
     def my_replies
+      logger.info 'Looking for replies I have written...'
       if my_replies_selector.blank?
         logger.warn "No XPath selectors found for 'my replies'"
         []
@@ -69,6 +115,7 @@ module Foræ
 
     # selection from current page of replies written toward me
     def replies_to_me
+      logger.info 'Checking for replies to my posts...'
       if replies_to_me_selector.blank?
         logger.warn "No XPath selectors found for 'my topic'"
         []
@@ -84,41 +131,67 @@ module Foræ
     def store_topics(topic_elements)
       logger.info 'Storing topics...'
       # logger.debug topic_elements.inspect
-      topic_elements.each do |element|
-        # assume URLs are unique identifiers
-        if (url = element[:href]).present?
-          # logger.debug "Element: #{element.instance_variables.inspect}"
-          known_topics[url] = known_topics.fetch(url, {}).merge(
-            id:            element.instance_variable_get(:@id),
-            link_text:     element.text,
-            enabled:       element.enabled?,
-            displayed:     element.displayed?,
-            replies_count: nil, # unknown, for now
-            locked?:       nil, # unknown, for now
-            mine?:         nil, # unknown, for now
-          )
-        else
-          logger.info "href not found for element: #{element.inspect}"
+      previous_topics_count = known_topics.try(:length).to_i
+      found_topics_count = topic_elements.try(:length).to_i
+      if found_topics_count > 0
+        logger.info "Topics found: #{found_topics_count}"
+        topic_elements.each do |element|
+          # assume URLs are unique identifiers
+          if (url = element[:href]).present?
+            # logger.debug "Element: #{element.instance_variables.inspect}"
+            known_topics[url] = known_topics.fetch(url, {}).merge(
+              id:            element.instance_variable_get(:@id),
+              link_text:     element.text,
+              enabled:       element.enabled?,
+              displayed:     element.displayed?,
+              replies_count: nil, # unknown, for now
+              locked?:       nil, # unknown, for now
+              mine?:         nil, # unknown, for now
+            )
+          else
+            logger.warn "href attribute not found for element: #{element.inspect}"
+          end
         end
       end
-      # logger.debug "Known topics:\n#{known_topics.inspect}"
+      found_topics_count = known_topics.length - previous_topics_count
+      logger.info "New topics added to memory: #{found_topics_count}"
       topic_elements
     end
 
+    def topic_page_selector
+      @topic_page_selector ||= fora.dom_selectors.
+                                 fetch(:topic_page, {}).
+                                 try(:with_indifferent_access)
+    end
+
     def topics_links_selector
-      @topics_links_selector ||= fora.dom_selectors.fetch(:topics_links, {}).try(:with_indifferent_access)
+      @topics_links_selector ||= fora.dom_selectors.
+                                   fetch(:topics_links, {}).
+                                   try(:with_indifferent_access)
     end
 
     def my_topic_selector
-      @my_topic_selector ||= fora.dom_selectors.fetch(:my_topic, {}).try(:with_indifferent_access)
+      @my_topic_selector ||= fora.dom_selectors.
+                               fetch(:my_topic, {}).
+                               try(:with_indifferent_access)
     end
 
     def my_replies_selector
-      @my_replies_selector ||= fora.dom_selectors.fetch(:my_replies, {}).try(:with_indifferent_access)
+      @my_replies_selector ||= fora.dom_selectors.
+                                 fetch(:my_replies, {}).
+                                 try(:with_indifferent_access)
     end
 
     def replies_to_me_selector
-      @replies_to_me_selector ||= fora.dom_selectors.fetch(:replies_to_me, {}).try(:with_indifferent_access)
+      @replies_to_me_selector ||= fora.dom_selectors.
+                                    fetch(:replies_to_me, {}).
+                                    try(:with_indifferent_access)
+    end
+
+    def locked_topic_selector
+      @locked_topic_selector ||= fora.dom_selectors.
+                                   fetch(:locked_topic, {}).
+                                   try(:with_indifferent_access)
     end
 
     private
@@ -157,7 +230,12 @@ module Foræ
       else
         raise ArgumentError, "Invalid expression received (Array or String expected): #{selector_config.inspect}"
       end
+    rescue Selenium::WebDriver::Error::NoSuchElementError => e
+      # Normal! This query didn’t find anything
+      logger.debug "#{e.class}: #{e.message}"
+      false
     rescue Selenium::WebDriver::Error::InvalidSelectorError => e
+      # Abnormal! This query should be fixed
       logger.error "#{e.class}: #{e.message}"
       nil
     end

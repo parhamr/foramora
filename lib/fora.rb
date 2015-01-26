@@ -1,6 +1,8 @@
 require 'active_support'
-require 'active_support/time'
 require 'active_support/core_ext'
+require 'active_support/inflector'
+require 'active_support/time'
+require 'action_view'
 require 'logging'
 require 'yaml'
 require 'highline/import'
@@ -9,6 +11,8 @@ require 'selenium-webdriver'
 
 # An abstract representation of a fora
 class Fora
+  include ::ActionView::Helpers::TextHelper
+
   attr_accessor :app_root,
     :logger,
     :client,
@@ -89,12 +93,10 @@ class Fora
                  end
       if response.blank? || response =~ /y/i
         logger.info 'Adding cookies...'
-        # Selenium requires you to be on the domain when adding cookies for it
-        visit ''
+        visit '' # Selenium requires you to be on the domain when adding cookies for it
         fora[:cookies].each do |k, v|
-          driver.manage.add_cookie(name: k.to_s, value: v.to_s, path: '/')
+          driver.manage.add_cookie(name: k.to_s, value: v.to_s, path: app_root)
         end
-        visit ''
       else
         logger.info 'Discarding cookies.'
       end
@@ -103,7 +105,7 @@ class Fora
   end
 
   def teardown
-    logger.info "Tearing down the #{fqdn} fora…"
+    logger.warn "QUITTING! Releasing resources and closing network handles."
     client.try(:close)
     driver.try(:quit)
     # always return true
@@ -133,6 +135,8 @@ class Fora
 
   delegate :visit_random_topic, to: :platform, allow_nil: true
   delegate :start_new_topic, to: :platform, allow_nil: true
+  delegate :viewing_a_topic?, to: :platform, allow_nil: true
+  delegate :topic_is_locked?, to: :platform, allow_nil: true
   delegate :viewing_my_topic?, to: :platform, allow_nil: true
   delegate :my_replies, to: :platform, allow_nil: true
   delegate :replies_to_me, to: :platform, allow_nil: true

@@ -5,6 +5,6 @@ require 'rubygems'
 require 'bundler/setup'
 Bundler.setup(:default)
 
-require_relative 'lib/fora_mora'
+require './lib/fora_mora'
 
 ForaMora.run
