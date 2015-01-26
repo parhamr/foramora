@@ -10,14 +10,14 @@ Dependencies: Ruby (see `.ruby-version` for version), Rubygems, curl, and librar
 
 Once Rubygems is installed, install application dependencies with these commands:
 
-```bash
+```
 gem install bundler
 bundle
 ```
 
 Use the example foræ YAML to build your own fora definitions.
 
-```bash
+```
 mv config/foræ.example.yaml config/foræ.yaml
 ```
 
