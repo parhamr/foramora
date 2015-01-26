@@ -1,3 +1,8 @@
+require 'active_support'
+require 'active_support/core_ext'
+require 'active_support/inflector'
+require 'active_support/time'
+require 'action_view'
 require 'logging'
 require 'yaml'
 require 'highline/import'
@@ -6,10 +11,13 @@ require 'selenium-webdriver'
 
 # An abstract representation of a fora
 class Fora
+  include ::ActionView::Helpers::TextHelper
+
   attr_accessor :app_root,
     :logger,
     :client,
     :driver,
+    :dom_selectors,
     :fora,
     :fqdn,
     :platform,
@@ -18,7 +26,7 @@ class Fora
   # class
 
   def self.foræ
-    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)['foræ']
+    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)[:foræ]
   end
 
   def self.platforms
@@ -41,22 +49,21 @@ class Fora
   # instance
 
   def initialize(*args)
-    options      = args.extract_options!.with_indifferent_access
+    options        = args.extract_options!.with_indifferent_access
     # subdomain, domain, tld
-    @fqdn        = options[:fqdn]
+    @fqdn          = options[:fqdn]
     # remember the main configuration object
-    @fora        = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
+    @fora          = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
     raise 'Fora not found!' if @fora.blank?
-    @logger      = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
-    logger.level = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
-    @driver      = Selenium::WebDriver.for options[:driver]
-    @client      = Curl::Easy.new
+    @logger        = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
+    logger.level   = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
+    @driver        = Selenium::WebDriver.for options[:driver]
     # https?
-    @secure      = options[:secure]
+    @secure        = options[:secure]
     # only if it violates the norm (80 or 443)
-    @port        = options[:port]
+    @port          = options[:port]
     # path to the fora, from the fqdn (include forward slash)
-    @app_root    = options[:app_root]
+    @app_root      = options[:app_root]
 
     @dom_selectors = options.fetch(:dom_selectors, {}).try(:with_indifferent_access)
 
@@ -70,18 +77,72 @@ class Fora
 
     @platform      = "Foræ::#{@fora[:platform_type]}".constantize.new(fora: self)
     logger.debug "Fora initialized! #{inspect}"
+    test if fora.fetch(:test_on_init, false)
+    optionally_load_cookies
+  end
+
+  def optionally_load_cookies
+    if fora.fetch(:cookies, {}).present?
+      # default is to load cookies if present
+      response = if fora.fetch(:cookies_auto_load, true)
+                   'yes'
+                 else
+                   puts "Available cookies:\n\t#{fora[:cookies].map { |k, v| "#{k}: #{v}" }.join("\n\t")}"
+                   # NOTE: the default is yes
+                   ask('Load these cookies? (Y/n)', String)
+                 end
+      if response.blank? || response =~ /y/i
+        logger.info 'Adding cookies...'
+        visit '' # Selenium requires you to be on the domain when adding cookies for it
+        fora[:cookies].each do |k, v|
+          driver.manage.add_cookie(name: k.to_s, value: v.to_s, path: app_root)
+        end
+      else
+        logger.info 'Discarding cookies.'
+      end
+    end
+    true
   end
 
   def teardown
-    logger.debug "Tearing down the #{fqdn} fora…"
+    logger.warn 'QUITTING! Releasing resources and closing network handles.'
     client.try(:close)
     driver.try(:quit)
+    # always return true
+    true
+  end
+
+  def url_for(*args)
+    options  = args.extract_options!.with_indifferent_access
+    # leading colon
+    port     = options[:port].blank? ? nil : ":#{options[:port]}"
+    # leading question mark
+    query    = options[:query].blank? ? nil : "?#{options[:query]}"
+    # leading octothorpe
+    fragment = options[:fragment].blank? ? nil : "##{options[:fragment]}"
+    URI("#{url_scheme}://#{fqdn}#{port}#{app_root}#{options[:path]}#{query}#{fragment}")
   end
 
   # interface only; the platform is the source of authority
-  def topics
+  def topics(path = nil)
     # NOTE: root url
-    platform.topics_at url_for(path: '')
+    platform.topics_at url_for(path: path.to_s)
+  end
+
+  def visit(path = nil)
+    platform.visit url_for(path: path.to_s)
+  end
+
+  delegate :visit_random_topic, to: :platform, allow_nil: true
+  delegate :start_new_topic, to: :platform, allow_nil: true
+  delegate :viewing_a_topic?, to: :platform, allow_nil: true
+  delegate :topic_is_locked?, to: :platform, allow_nil: true
+  delegate :viewing_my_topic?, to: :platform, allow_nil: true
+  delegate :my_replies, to: :platform, allow_nil: true
+  delegate :replies_to_me, to: :platform, allow_nil: true
+
+  def wait_times
+    @wait_times ||= @fora.fetch(:waits, {})
   end
 
   def test
@@ -108,15 +169,9 @@ class Fora
 
   protected
 
-  def url_for(*args)
-    options  = args.extract_options!.with_indifferent_access
-    # leading colon
-    port     = options[:port].blank? ? nil : ":#{options[:port]}"
-    # leading question mark
-    query    = options[:query].blank? ? nil : "?#{options[:query]}"
-    # leading octothorpe
-    fragment = options[:fragment].blank? ? nil : "##{options[:fragment]}"
-    URI("#{scheme}://#{fqdn}#{port}#{app_root}#{options[:path]}#{query}#{fragment}")
+  # NOTE: beware of threaded calls to this resource
+  def client
+    @client ||= Curl::Easy.new
   end
 
   def cookies

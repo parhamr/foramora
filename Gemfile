@@ -7,10 +7,11 @@ gem 'selenium-webdriver'
 gem 'rake'
 gem 'i18n', '~> 0.7.0'
 gem 'activesupport'
+gem 'actionview'
 gem 'curb'
 gem 'nokogiri'
 gem 'multi_json'
-gem 'ffaker'
+gem 'faker'
 gem 'sanitize'
 
 # localhost stuff
@@ -20,6 +21,8 @@ gem 'highline'
 
 # testing
 group :test, :development do
+  gem 'pry' # when debugging
+  gem 'factory_girl'
   gem 'guard'
   gem 'guard-rspec'
   gem 'rspec-its' # adds support for "its" method in RSpec 3
