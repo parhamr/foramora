@@ -6,10 +6,10 @@ require 'rspec/its'
 require 'factory_girl'
 
 # find all of these paths
-# FIXME: cross-platform support?
 Dir[
-  './lib/**/*.rb',
-  './spec/support/**/*.rb'
+  # attempts cross platform support
+  File.join('.', 'lib', '**', '*.rb'),
+  File.join('.', 'spec', 'support', '**', '*.rb')
 ].sort.each do |file|
   # build the require statement
   dirname = File.dirname(file)
