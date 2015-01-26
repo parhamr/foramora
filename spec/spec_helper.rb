@@ -16,3 +16,8 @@ Dir[
   require require_statement
 end
 
+RSpec.configure do |config|
+  config.mock_with :rspec do |mocks|
+    mocks.syntax = :expect
+  end
+end
