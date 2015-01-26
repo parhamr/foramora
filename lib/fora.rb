@@ -105,7 +105,7 @@ class Fora
   end
 
   def teardown
-    logger.warn "QUITTING! Releasing resources and closing network handles."
+    logger.warn 'QUITTING! Releasing resources and closing network handles.'
     client.try(:close)
     driver.try(:quit)
     # always return true
@@ -169,6 +169,7 @@ class Fora
 
   protected
 
+  # NOTE: beware of threaded calls to this resource
   def client
     @client ||= Curl::Easy.new
   end

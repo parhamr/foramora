@@ -94,7 +94,8 @@ class Mora
     logger.debug 'Viewing my topic?'
     if (my_topic = fora.viewing_my_topic?)
       logger.info 'This is my topic!'
-      true
+      # NOTE: truthy return value!
+      my_topic
     else
       logger.info 'This is not my topic.'
       false

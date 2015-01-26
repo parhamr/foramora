@@ -31,6 +31,8 @@ TDD support:
 
 `bundle exec guard`
 
+NOTE: since the code is procedural, RuboCop style defaults have been loosened to account for the habits of complex assignments and long methods.
+
 ## Testing
 
 Run the suite with this command:

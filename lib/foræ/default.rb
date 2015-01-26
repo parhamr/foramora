@@ -1,5 +1,7 @@
 module Foræ
-  #
+  # abstracted and common behaviors for each fora platform
+  # external interactions use through this class
+  # interactions are bidirectional; post and request content here
   class ::Foræ::Default
     attr_accessor :fora,
       :known_topics,
@@ -11,6 +13,7 @@ module Foræ
       :my_replies_selector,
       :replies_to_me_selector
 
+    # NOTE: options has needs the minimal requirements; see foræ.example.yaml
     def initialize(*args)
       options = args.extract_options!
       @fora = options[:fora]
@@ -33,6 +36,7 @@ module Foræ
       store_topics(topic_elements)
     end
 
+    # HTTP GET requests
     def visit(url)
       logger.info "Loading #{url}"
       driver.get url.to_s
@@ -42,12 +46,15 @@ module Foræ
       logger.error "Failed to load! #{e.class}: #{e.message} (#{e.backtrace[0]})"
     end
 
+    #
     def visit_random_topic
       logger.info 'Visiting random topic...'
+      # TODO: store a cache of the properties of the chosen topic
       visit known_topics.keys.sample
     end
 
     def start_new_topic
+      # TODO
     end
 
     def viewing_a_topic?
@@ -67,6 +74,7 @@ module Foræ
       end
     end
 
+    # NOTE: returns true when the current page might not be a topic
     def topic_is_locked?
       locked_topic_element = if viewing_a_topic?
                                logger.info 'Checking if this topic is locked...'
@@ -76,8 +84,6 @@ module Foræ
                                else
                                  call_driver_finder(locked_topic_selector)
                                end
-                             else
-                               nil
                              end
       if locked_topic_element.present?
         logger.warn 'This is a locked topic.'
@@ -96,6 +102,7 @@ module Foræ
       logger.info 'Checking if this is my topic...'
       if my_topic_selector.blank?
         logger.warn "No XPath selectors found for 'my topic'"
+        # Default to empty object
         nil
       else
         call_driver_finder(my_topic_selector)
@@ -107,6 +114,7 @@ module Foræ
       logger.info 'Looking for replies I have written...'
       if my_replies_selector.blank?
         logger.warn "No XPath selectors found for 'my replies'"
+        # Default to empty set
         []
       else
         call_driver_finder(my_replies_selector)
@@ -118,6 +126,7 @@ module Foræ
       logger.info 'Checking for replies to my posts...'
       if replies_to_me_selector.blank?
         logger.warn "No XPath selectors found for 'my topic'"
+        # Default to empty set
         []
       else
         call_driver_finder(replies_to_me_selector)
@@ -160,38 +169,38 @@ module Foræ
 
     def topic_page_selector
       @topic_page_selector ||= fora.dom_selectors.
-                                 fetch(:topic_page, {}).
-                                 try(:with_indifferent_access)
+                               fetch(:topic_page, {}).
+                               try(:with_indifferent_access)
     end
 
     def topics_links_selector
       @topics_links_selector ||= fora.dom_selectors.
-                                   fetch(:topics_links, {}).
-                                   try(:with_indifferent_access)
+                                 fetch(:topics_links, {}).
+                                 try(:with_indifferent_access)
     end
 
     def my_topic_selector
       @my_topic_selector ||= fora.dom_selectors.
-                               fetch(:my_topic, {}).
-                               try(:with_indifferent_access)
+                             fetch(:my_topic, {}).
+                             try(:with_indifferent_access)
     end
 
     def my_replies_selector
       @my_replies_selector ||= fora.dom_selectors.
-                                 fetch(:my_replies, {}).
-                                 try(:with_indifferent_access)
+                               fetch(:my_replies, {}).
+                               try(:with_indifferent_access)
     end
 
     def replies_to_me_selector
       @replies_to_me_selector ||= fora.dom_selectors.
-                                    fetch(:replies_to_me, {}).
-                                    try(:with_indifferent_access)
+                                  fetch(:replies_to_me, {}).
+                                  try(:with_indifferent_access)
     end
 
     def locked_topic_selector
       @locked_topic_selector ||= fora.dom_selectors.
-                                   fetch(:locked_topic, {}).
-                                   try(:with_indifferent_access)
+                                 fetch(:locked_topic, {}).
+                                 try(:with_indifferent_access)
     end
 
     private
