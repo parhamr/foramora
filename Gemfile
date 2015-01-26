@@ -28,4 +28,6 @@ group :test, :development do
   gem 'rspec-its' # adds support for "its" method in RSpec 3
   gem 'listen'
   gem 'guard-rubocop'
+  gem 'simplecov'
+  gem 'headless'
 end

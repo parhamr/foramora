@@ -1,9 +1,6 @@
 require 'active_support'
 require 'active_support/time'
 require 'active_support/core_ext'
-require 'rspec'
-require 'rspec/its'
-require 'factory_girl'
 
 # find all of these paths
 Dir[
@@ -18,3 +15,4 @@ Dir[
   # puts "requiring #{require_statement.inspect}"
   require require_statement
 end
+
