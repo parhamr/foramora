@@ -12,7 +12,7 @@ require 'active_support/core_ext'
 
 RSpec.configure do |config|
   # disable SimpleCov when running through Guard
-  unless ENV['NO_COVERAGE']
+  if ENV['COVERAGE']
     # NOTE: this must happen before application code is required
     require 'simplecov'
     require 'launchy'
