@@ -38,7 +38,7 @@ class Fora
   end
 
   def self.test_uris
-    @test_uris ||= platforms.map { |p| p[:test].merge(name: p[:name]) }
+    @test_uris ||= platforms.map { |p| p.fetch(:test, {}).merge(name: p[:name]) }
   end
 
   def self.select_target
