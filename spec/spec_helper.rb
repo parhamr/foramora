@@ -19,14 +19,13 @@ RSpec.configure do |config|
     SimpleCov.start do
       add_filter '/spec/'
       add_filter '/lib/tasks/'
-   
       add_group 'Application', '../lib/'
       add_group 'Configuration', '../config/'
     end
 
     config.after(:suite) do
       # Open the newly generated coverage report
-      Launchy.open( 'file://' + File.join(__dir__, '..', 'coverage', 'index.html') )
+      Launchy.open('file://' + File.join(__dir__, '..', 'coverage', 'index.html'))
     end
   end
 
@@ -48,4 +47,3 @@ RSpec.configure do |config|
     require require_statement
   end
 end
-
