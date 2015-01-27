@@ -23,13 +23,6 @@ RSpec.configure do |config|
       add_group 'Configuration', '../config/'
     end
 
-    config.before(:each, selenium: false) do
-      allow(Selenium::WebDriver).to receive(:for).and_return(Selenium::FakeDriver.new)
-      allow_any_instance_of(Selenium::FakeDriver).to receive(:find_element).and_return(nil)
-      allow_any_instance_of(Selenium::FakeDriver).to receive(:find_elements).and_return([])
-      allow_any_instance_of(Selenium::FakeDriver).to receive(:get).and_return(true)
-    end
-
     config.after(:suite) do
       # Open the newly generated coverage report
       Launchy.open('file://' + File.join(__dir__, '..', 'coverage', 'index.html'))
@@ -40,6 +33,13 @@ RSpec.configure do |config|
 
   config.mock_with :rspec do |mocks|
     mocks.syntax = :expect
+  end
+
+  config.before(:each, selenium: false) do
+    allow(Selenium::WebDriver).to receive(:for).and_return(Selenium::FakeDriver.new)
+    allow_any_instance_of(Selenium::FakeDriver).to receive(:find_element).and_return(nil)
+    allow_any_instance_of(Selenium::FakeDriver).to receive(:find_elements).and_return([])
+    allow_any_instance_of(Selenium::FakeDriver).to receive(:get).and_return(true)
   end
 
   # find all of these paths
