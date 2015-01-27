@@ -4,7 +4,7 @@
 
 require 'spec_helper'
 
-describe Mora do
+describe Mora, selenium: false do
   describe '[class]' do
     subject { Mora }
   end

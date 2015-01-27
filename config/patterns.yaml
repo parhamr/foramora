@@ -13,3 +13,6 @@
       :uri: '/member.php?action=register'
       # NOTE: Regexp allowed
       :substring: 'Registration Agreement'
+  - :name: 'Test'
+    :urls:
+      :root: '/'
