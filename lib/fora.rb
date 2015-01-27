@@ -72,7 +72,7 @@ class Fora
     @dom_selectors = options.fetch(:dom_selectors, {}).try(:with_indifferent_access)
 
     begin
-      require_relative "forae/#{@fora[:platform_type].underscore.downcase}"
+      require_relative File.join('.', 'forae', @fora[:platform_type].underscore.downcase)
     rescue LoadError => e
       logger.error "#{e.class}: #{e.message} (#{e.backtrace[0]})"
       teardown
@@ -80,7 +80,7 @@ class Fora
     end
 
     @platform      = "Forae::#{@fora[:platform_type]}".constantize.new(fora: self)
-    logger.debug "Fora initialized! #{inspect}"
+    logger.debug "#{self.class} initialized! #{inspect}"
     test if fora.fetch(:test_on_init, false)
     optionally_load_cookies
   end

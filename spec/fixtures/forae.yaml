@@ -29,6 +29,10 @@
         type: :css
         expression: 'CSS selector goes here'
         returns: :many
+      :topic_page:
+        :type: :css
+        :expression: 'CSS selector goes here'
+        :returns: :one
       :my_topic:
         type: :xpath
         expression: 'XPath expression goes here'
@@ -41,3 +45,7 @@
         type: :xpath
         expression: 'xpath expression goes here'
         returns: :many
+      :locked_topic:
+        :type: :xpath
+        :expression: 'xpath expression goes here'
+        :returns: :one
