@@ -1,15 +1,19 @@
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
 require 'spec_helper'
 
 describe Fora do
   describe '[class]' do
     subject { Fora }
 
-    its(:foræ) { should be_an Array }
+    its(:forae) { should be_an Array }
     its(:platforms) { should be_an Array }
     its(:test_uris) { should be_an Array }
   end
 
-  let(:valid_options) { YAML.load(ERB.new(File.binread('spec/fixtures/foræ.yaml')).result)[:foræ].first }
+  let(:valid_options) { YAML.load(ERB.new(File.binread('spec/fixtures/forae.yaml')).result)[:forae].first }
 
   describe '[instance]' do
     after do

@@ -17,10 +17,10 @@ gem install bundler
 bundle
 ```
 
-Use the example foræ YAML to build your own fora definitions.
+Use the example forae YAML to build your own fora definitions.
 
 ```
-mv config/foræ.example.yaml config/foræ.yaml
+mv config/forae.example.yaml config/forae.yaml
 ```
 
 ## Run it!

@@ -1,3 +1,7 @@
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
 require 'active_support'
 require 'active_support/core_ext'
 require 'active_support/inflector'
@@ -25,8 +29,8 @@ class Fora
 
   # class
 
-  def self.foræ
-    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)[:foræ]
+  def self.forae
+    @forae ||= YAML.load(ERB.new(File.binread('config/forae.yaml')).result)[:forae]
   end
 
   def self.platforms
@@ -38,12 +42,12 @@ class Fora
   end
 
   def self.select_target
-    puts "Available foræ:\n\t#{self.foræ.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
+    puts "Available forae:\n\t#{self.forae.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
     selection = ask('Which fora would you like to use? ', Integer) do |q|
       # validates response is within bounds
-      q.in = (0..(foræ.length - 1))
+      q.in = (0..(forae.length - 1))
     end
-    new(foræ[selection])
+    new(forae[selection])
   end
 
   # instance
@@ -53,7 +57,7 @@ class Fora
     # subdomain, domain, tld
     @fqdn          = options[:fqdn]
     # remember the main configuration object
-    @fora          = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
+    @fora          = self.class.forae.detect { |f| f[:fqdn] == fqdn }
     raise 'Fora not found!' if @fora.blank?
     @logger        = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
     logger.level   = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
@@ -68,14 +72,14 @@ class Fora
     @dom_selectors = options.fetch(:dom_selectors, {}).try(:with_indifferent_access)
 
     begin
-      require_relative "foræ/#{@fora[:platform_type].underscore.downcase}"
+      require_relative "forae/#{@fora[:platform_type].underscore.downcase}"
     rescue LoadError => e
       logger.error "#{e.class}: #{e.message} (#{e.backtrace[0]})"
       teardown
       false
     end
 
-    @platform      = "Foræ::#{@fora[:platform_type]}".constantize.new(fora: self)
+    @platform      = "Forae::#{@fora[:platform_type]}".constantize.new(fora: self)
     logger.debug "Fora initialized! #{inspect}"
     test if fora.fetch(:test_on_init, false)
     optionally_load_cookies

@@ -1,8 +1,12 @@
-module Foræ
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
+module Forae
   # abstracted and common behaviors for each fora platform
   # external interactions use through this class
   # interactions are bidirectional; post and request content here
-  class ::Foræ::Default
+  class ::Forae::Default
     attr_accessor :fora,
       :known_topics,
       :logger,
@@ -13,7 +17,7 @@ module Foræ
       :my_replies_selector,
       :replies_to_me_selector
 
-    # NOTE: options has needs the minimal requirements; see foræ.example.yaml
+    # NOTE: options has needs the minimal requirements; see forae.example.yaml
     def initialize(*args)
       options = args.extract_options!
       @fora = options[:fora]
@@ -136,7 +140,7 @@ module Foræ
     protected
 
     # take the topics seen and add them to the known topics
-    # NOTE: moderate risk of huge memory allocations for large foræ
+    # NOTE: moderate risk of huge memory allocations for large forae
     def store_topics(topic_elements)
       logger.info 'Storing topics...'
       # logger.debug topic_elements.inspect
