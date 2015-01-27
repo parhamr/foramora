@@ -27,6 +27,9 @@ class Mora
     @browsing_history = []
   end
 
+  delegate :topic_is_locked?, to: :fora
+  delegate :viewing_a_topic_page?, to: :fora
+
   def simulate!
     browse!
     reply!
@@ -86,14 +89,6 @@ class Mora
     end
   end
 
-  def topic_is_locked?
-    fora.topic_is_locked?
-  end
-
-  def viewing_a_topic_page?
-    fora.viewing_a_topic?
-  end
-
   def viewing_my_topic?
     logger.debug 'Viewing my topic?'
     if (my_topic = fora.viewing_my_topic?)
@@ -125,9 +120,5 @@ class Mora
       end
     end
     true
-  end
-
-  def locked_topic?
-    false
   end
 end
