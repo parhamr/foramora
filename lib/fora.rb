@@ -42,7 +42,7 @@ class Fora
   end
 
   def self.select_target
-    puts "Available forae:\n\t#{self.forae.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
+    puts "Available forae:\n\t#{forae.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
     selection = ask('Which fora would you like to use? ', Integer) do |q|
       # validates response is within bounds
       q.in = (0..(forae.length - 1))
@@ -133,6 +133,7 @@ class Fora
     platform.topics_at url_for(path: path.to_s)
   end
 
+  # Adds the path to the full URL and delegates to the platform
   def visit(path = nil)
     platform.visit url_for(path: path.to_s)
   end
@@ -149,6 +150,7 @@ class Fora
     @wait_times ||= @fora.fetch(:waits, {})
   end
 
+  # Checks if the Fora can be reached and dumps the received responses
   def test
     base_url = url_for(path: '')
     logger.debug "Testing the #{fqdn} fora"

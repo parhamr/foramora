@@ -29,6 +29,7 @@ class Mora
 
   delegate :topic_is_locked?, to: :fora
   delegate :viewing_a_topic_page?, to: :fora
+  delegate :viewing_my_topic?, to: :fora
 
   def simulate!
     browse!
@@ -86,18 +87,6 @@ class Mora
       sleep_time = TOPIC_READING_PERIOD - elapsed_time
       logger.debug "Continuing to read for #{pluralize(sleep_time, 'second')}"
       sleep sleep_time
-    end
-  end
-
-  def viewing_my_topic?
-    logger.debug 'Viewing my topic?'
-    if (my_topic = fora.viewing_my_topic?)
-      logger.info 'This is my topic!'
-      # NOTE: truthy return value!
-      my_topic
-    else
-      logger.info 'This is not my topic.'
-      false
     end
   end
 

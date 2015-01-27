@@ -104,13 +104,15 @@ module Forae
     # does the current page show I am the author?
     def viewing_my_topic?
       logger.info 'Checking if this is my topic...'
-      if my_topic_selector.blank?
-        logger.warn "No XPath selectors found for 'my topic'"
-        # Default to empty object
-        nil
-      else
-        call_driver_finder(my_topic_selector)
-      end
+      returning = if my_topic_selector.blank?
+                    logger.warn "No XPath selectors found for 'my topic'"
+                    # Default to empty object
+                    nil
+                  else
+                    call_driver_finder(my_topic_selector)
+                  end
+      logger.info((returning ? 'This is my topic!' : 'This is not my topic.'))
+      returning
     end
 
     # selection from current page of replies written by me
