@@ -6,14 +6,14 @@ require 'spec_helper'
 
 describe Forae::Test, selenium: false do
   describe '[class]' do
-    subject { Forae::Default }
+    subject { Forae::Test }
   end
 
   let(:valid_fora_options) { YAML.load(ERB.new(File.binread('spec/fixtures/forae.yaml')).result)[:forae].first }
 
   describe '[instance]' do
     let(:fora) { Fora.new(valid_fora_options) }
-    subject { Forae::Default.new(fora: fora) }
+    subject { Forae::Test.new(fora: fora) }
 
     context 'with valid options' do
       let(:dom_selector) { { type: :css, expression: 'CSS selector goes here', returns: :one } }
