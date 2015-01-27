@@ -116,6 +116,7 @@ class Fora
     true
   end
 
+  # REVIEW: does this belong at the platform level?
   def url_for(*args)
     options  = args.extract_options!.with_indifferent_access
     # leading colon
@@ -139,6 +140,7 @@ class Fora
   end
 
   delegate :visit_random_topic, to: :platform, allow_nil: true
+  delegate :known_topics, to: :platform, allow_nil: true
   delegate :start_new_topic, to: :platform, allow_nil: true
   delegate :viewing_a_topic?, to: :platform, allow_nil: true
   delegate :topic_is_locked?, to: :platform, allow_nil: true

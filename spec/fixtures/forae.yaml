@@ -5,7 +5,7 @@
     :cookies_auto_load: false
     :app_root: /
     :driver: :firefox
-    :platform_type: Test
+    :platform_type: MiniBBS
     :log_to: log/test.log
     :log_level: :info
     :dom_selectors:
@@ -26,26 +26,26 @@
       # TODO: special type; array of selectors when multiple click paths are required
       # CSS or XPath
       :topics_links:
-        type: :css
-        expression: 'CSS selector goes here'
-        returns: :many
+        :type: :css
+        :expression: '#body_wrapper .topic_headline a'
+        :returns: :many
       :topic_page:
         :type: :css
-        :expression: 'CSS selector goes here'
+        :expression: '#body_wrapper h3 span.reply_id'
         :returns: :one
-      :my_topic:
-        type: :xpath
-        expression: 'XPath expression goes here'
-        returns: :one
-      :my_replies:
-        type: :xpath
-        expression: 'XPath expression goes here'
-        returns: :many
-      :replies_to_me:
-        type: :xpath
-        expression: 'xpath expression goes here'
-        returns: :many
       :locked_topic:
         :type: :xpath
-        :expression: 'xpath expression goes here'
+        :expression: "//ul[@class='menu']/li[text()[contains(., 'Topic locked')]]"
         :returns: :one
+      :my_topic:
+        :type: :xpath
+        :expression: "//h3[text()[contains(., '(you)')]]/following-sibling::div"
+        :returns: :one
+      :my_replies:
+        :type: :xpath
+        :expression: "//h3[text()[contains(., '(you)')]]/following-sibling::div[@class='body']"
+        :returns: :many
+      :replies_to_me:
+        :type: :xpath
+        :expression: "//span[@class='unimportant' and contains(text(),'(you)')][preceding::div[@class='body'][1]]"
+        :returns: :many
