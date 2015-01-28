@@ -1,3 +1,7 @@
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
 require 'active_support'
 require 'active_support/core_ext'
 require 'active_support/inflector'
@@ -25,8 +29,8 @@ class Fora
 
   # class
 
-  def self.foræ
-    @foræ ||= YAML.load(ERB.new(File.binread('config/foræ.yaml')).result)[:foræ]
+  def self.forae
+    @forae ||= YAML.load(ERB.new(File.binread('config/forae.yaml')).result)[:forae]
   end
 
   def self.platforms
@@ -34,16 +38,16 @@ class Fora
   end
 
   def self.test_uris
-    @test_uris ||= platforms.map { |p| p[:test].merge(name: p[:name]) }
+    @test_uris ||= platforms.map { |p| p.fetch(:test, {}).merge(name: p[:name]) }
   end
 
   def self.select_target
-    puts "Available foræ:\n\t#{self.foræ.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
+    puts "Available forae:\n\t#{forae.each_with_index.map { |f, i| "#{i}) #{f[:fqdn]}" }.join("\n\t")}"
     selection = ask('Which fora would you like to use? ', Integer) do |q|
       # validates response is within bounds
-      q.in = (0..(foræ.length - 1))
+      q.in = (0..(forae.length - 1))
     end
-    new(foræ[selection])
+    new(forae[selection])
   end
 
   # instance
@@ -53,7 +57,7 @@ class Fora
     # subdomain, domain, tld
     @fqdn          = options[:fqdn]
     # remember the main configuration object
-    @fora          = self.class.foræ.detect { |f| f[:fqdn] == fqdn }
+    @fora          = self.class.forae.detect { |f| f[:fqdn] == fqdn }
     raise 'Fora not found!' if @fora.blank?
     @logger        = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
     logger.level   = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
@@ -68,15 +72,15 @@ class Fora
     @dom_selectors = options.fetch(:dom_selectors, {}).try(:with_indifferent_access)
 
     begin
-      require_relative "foræ/#{@fora[:platform_type].underscore.downcase}"
+      require_relative File.join('.', 'forae', @fora[:platform_type].underscore.downcase)
     rescue LoadError => e
       logger.error "#{e.class}: #{e.message} (#{e.backtrace[0]})"
       teardown
       false
     end
 
-    @platform      = "Foræ::#{@fora[:platform_type]}".constantize.new(fora: self)
-    logger.debug "Fora initialized! #{inspect}"
+    @platform      = "Forae::#{@fora[:platform_type]}".constantize.new(fora: self)
+    logger.debug "#{self.class} initialized! #{inspect}"
     test if fora.fetch(:test_on_init, false)
     optionally_load_cookies
   end
@@ -112,6 +116,7 @@ class Fora
     true
   end
 
+  # REVIEW: does this belong at the platform level?
   def url_for(*args)
     options  = args.extract_options!.with_indifferent_access
     # leading colon
@@ -129,11 +134,13 @@ class Fora
     platform.topics_at url_for(path: path.to_s)
   end
 
+  # Adds the path to the full URL and delegates to the platform
   def visit(path = nil)
     platform.visit url_for(path: path.to_s)
   end
 
   delegate :visit_random_topic, to: :platform, allow_nil: true
+  delegate :known_topics, to: :platform, allow_nil: true
   delegate :start_new_topic, to: :platform, allow_nil: true
   delegate :viewing_a_topic?, to: :platform, allow_nil: true
   delegate :topic_is_locked?, to: :platform, allow_nil: true
@@ -145,6 +152,7 @@ class Fora
     @wait_times ||= @fora.fetch(:waits, {})
   end
 
+  # Checks if the Fora can be reached and dumps the received responses
   def test
     base_url = url_for(path: '')
     logger.debug "Testing the #{fqdn} fora"

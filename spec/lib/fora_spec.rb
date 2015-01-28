@@ -1,15 +1,19 @@
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
 require 'spec_helper'
 
-describe Fora do
+describe Fora, selenium: false do
   describe '[class]' do
     subject { Fora }
 
-    its(:foræ) { should be_an Array }
+    its(:forae) { should be_an Array }
     its(:platforms) { should be_an Array }
     its(:test_uris) { should be_an Array }
   end
 
-  let(:valid_options) { YAML.load(ERB.new(File.binread('spec/fixtures/foræ.yaml')).result)[:foræ].first }
+  let(:valid_options) { YAML.load(ERB.new(File.binread('spec/fixtures/forae.yaml')).result)[:forae].first }
 
   describe '[instance]' do
     after do
@@ -24,8 +28,33 @@ describe Fora do
       end
 
       describe '#topics' do
-        it 'is Array' do
+        it 'is an Array' do
           expect(subject.topics).to be_an Array
+        end
+      end
+
+      describe '#wait_times' do
+        #
+        it 'is a Hash' do
+          expect(subject.wait_times).to be_a Hash
+        end
+      end
+
+      context 'with empty selectors' do
+        before do
+          allow_any_instance_of(Fora).to receive(:dom_selectors).and_return({})
+        end
+
+        describe '#topics' do
+          it 'is empty' do
+            expect(subject.topics).to be_empty
+          end
+        end
+
+        describe '#visit' do
+          it 'is truthy' do
+            expect(subject.visit).to be_truthy
+          end
         end
       end
     end

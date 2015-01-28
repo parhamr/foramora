@@ -1,3 +1,7 @@
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
 require 'faker'
 
 #
@@ -22,6 +26,10 @@ class Mora
     @created_at = Time.now.utc
     @browsing_history = []
   end
+
+  delegate :topic_is_locked?, to: :fora
+  delegate :viewing_a_topic_page?, to: :fora
+  delegate :viewing_my_topic?, to: :fora
 
   def simulate!
     browse!
@@ -64,6 +72,7 @@ class Mora
   end
 
   def reply!(options = {})
+    # TODO
   end
 
   def read_this_page
@@ -75,31 +84,7 @@ class Mora
     end
     elapsed_time = (Time.now.utc.to_f - start_time)
     logger.info "Time to read the current page: #{pluralize(elapsed_time, 'second')}."
-    if elapsed_time < TOPIC_READING_PERIOD
-      sleep_time = TOPIC_READING_PERIOD - elapsed_time
-      logger.debug "Continuing to read for #{pluralize(sleep_time, 'second')}"
-      sleep sleep_time
-    end
-  end
-
-  def topic_is_locked?
-    fora.topic_is_locked?
-  end
-
-  def viewing_a_topic_page?
-    fora.viewing_a_topic?
-  end
-
-  def viewing_my_topic?
-    logger.debug 'Viewing my topic?'
-    if (my_topic = fora.viewing_my_topic?)
-      logger.info 'This is my topic!'
-      # NOTE: truthy return value!
-      my_topic
-    else
-      logger.info 'This is not my topic.'
-      false
-    end
+    true
   end
 
   def check_my_replies
@@ -121,9 +106,5 @@ class Mora
       end
     end
     true
-  end
-
-  def locked_topic?
-    false
   end
 end

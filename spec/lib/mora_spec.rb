@@ -1,6 +1,10 @@
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
 require 'spec_helper'
 
-describe Mora do
+describe Mora, selenium: false do
   describe '[class]' do
     subject { Mora }
   end

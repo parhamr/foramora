@@ -1,5 +1,3 @@
-directories %w(. lib config spec)
-
 guard :rspec, cmd: "bundle exec rspec", all_on_start: false, all_after_pass: false, failed_mode: :none do
   require "guard/rspec/dsl"
   dsl = Guard::RSpec::Dsl.new(self)

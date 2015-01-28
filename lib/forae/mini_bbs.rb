@@ -1,7 +1,7 @@
 #
 require_relative 'default'
 
-module Foræ
+module Forae
   class MiniBBS < Default
   end
 end

@@ -1,4 +1,7 @@
 #!/usr/bin/ruby
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
 
 # general bootstrap and utilities
 require 'rubygems'

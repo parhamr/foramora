@@ -1,8 +1,12 @@
-module Foræ
+# encoding: UTF-8
+# coding: UTF-8
+# -*- coding: UTF-8 -*-
+
+module Forae
   # abstracted and common behaviors for each fora platform
   # external interactions use through this class
   # interactions are bidirectional; post and request content here
-  class ::Foræ::Default
+  class Default
     attr_accessor :fora,
       :known_topics,
       :logger,
@@ -13,12 +17,13 @@ module Foræ
       :my_replies_selector,
       :replies_to_me_selector
 
-    # NOTE: options has needs the minimal requirements; see foræ.example.yaml
+    # NOTE: options has needs the minimal requirements; see forae.example.yaml
     def initialize(*args)
       options = args.extract_options!
       @fora = options[:fora]
       @logger = fora.logger
       @known_topics = {}
+      logger.debug "#{self.class} initialized! #{inspect}"
     end
 
     delegate :driver, to: :fora, allow_nil: true
@@ -100,13 +105,15 @@ module Foræ
     # does the current page show I am the author?
     def viewing_my_topic?
       logger.info 'Checking if this is my topic...'
-      if my_topic_selector.blank?
-        logger.warn "No XPath selectors found for 'my topic'"
-        # Default to empty object
-        nil
-      else
-        call_driver_finder(my_topic_selector)
-      end
+      returning = if my_topic_selector.blank?
+                    logger.warn "No XPath selectors found for 'my topic'"
+                    # Default to empty object
+                    nil
+                  else
+                    call_driver_finder(my_topic_selector)
+                  end
+      logger.info((returning ? 'This is my topic!' : 'This is not my topic.'))
+      returning
     end
 
     # selection from current page of replies written by me
@@ -136,7 +143,7 @@ module Foræ
     protected
 
     # take the topics seen and add them to the known topics
-    # NOTE: moderate risk of huge memory allocations for large foræ
+    # NOTE: moderate risk of huge memory allocations for large forae
     def store_topics(topic_elements)
       logger.info 'Storing topics...'
       # logger.debug topic_elements.inspect
@@ -208,15 +215,18 @@ module Foræ
     def call_driver_finder(selector_config)
       logger.debug "#call_driver_finder called with: #{selector_config.inspect}"
       unless selector_config.respond_to?(:fetch)
-        raise ArgumentError, "Options should respond to #fetch; class #{selector_config.class} does not"
+        msg = "Options should respond to #fetch; class #{selector_config.class} does not"
+        logger.fatal msg
+        raise ArgumentError, msg
       end
+      selector_config.with_indifferent_access
       # TODO: validate expression when type is :xpath?
       search_type = selector_config.fetch(:type, :css)
-      logger.debug "search_type: #{search_type.inspect}"
+      logger.debug "search_type: #{search_type.inspect} (#{search_type.class})"
       search_expression = selector_config.fetch(:expression, nil)
-      logger.debug "search_expression: #{search_expression.inspect}"
+      logger.debug "search_expression: #{search_expression.inspect} (#{search_expression.class})"
       search_returns = selector_config.fetch(:returns, :many)
-      logger.debug "search_returns: #{search_returns.inspect}"
+      logger.debug "search_returns: #{search_returns.inspect} (#{search_returns.class})"
       case search_expression
       when Array
         # minor recursion!
@@ -227,21 +237,25 @@ module Foræ
             returns:    search_returns
           )
         end
-      when String
-        case search_returns
-        when :one
+      when String, Symbol
+        case search_returns.to_s
+        when 'one'
           driver.find_element(search_type, search_expression)
-        when :many
+        when 'many'
           driver.find_elements(search_type, search_expression)
         else
-          raise ArgumentError, "Invalid :returns received (:one or :many expected): #{search_returns.inspect}"
+          msg = "Invalid :returns received (:one or :many expected): #{search_returns.inspect}"
+          logger.fatal msg
+          raise ArgumentError, msg
         end
       else
-        raise ArgumentError, "Invalid expression received (Array or String expected): #{selector_config.inspect}"
+        msg = "Invalid expression received (Array, Symbol, or String expected): #{search_expression.class}"
+        logger.fatal msg
+        raise ArgumentError, msg
       end
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       # Normal! This query didn’t find anything
-      logger.debug "#{e.class}: #{e.message}"
+      logger.info "#{e.class}: #{e.message}"
       false
     rescue Selenium::WebDriver::Error::InvalidSelectorError => e
       # Abnormal! This query should be fixed

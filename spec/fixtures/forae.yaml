@@ -1,0 +1,51 @@
+:forae:
+  - :fqdn: example.org
+    :secure: false
+    :test_on_init: false
+    :cookies_auto_load: false
+    :app_root: /
+    :driver: :firefox
+    :platform_type: MiniBBS
+    :log_to: log/test.log
+    :log_level: :info
+    :dom_selectors:
+    :cookies:
+    # times in seconds; integers expected
+    # These are the actual, configured wait values on the remote fora
+    :waits:
+      # delay between new topics
+      :new_topic: 60
+      :compose_topic: 10
+      # delay between replies
+      :new_reply: 15
+      # delay between starting a reply and submitting the form
+      :compose_reply: 5
+    # how long to actually wait for the above (float allowed)
+    :wait_multiplier: 1.5
+    :dom_selectors:
+      # TODO: special type; array of selectors when multiple click paths are required
+      # CSS or XPath
+      :topics_links:
+        :type: :css
+        :expression: '#body_wrapper .topic_headline a'
+        :returns: :many
+      :topic_page:
+        :type: :css
+        :expression: '#body_wrapper h3 span.reply_id'
+        :returns: :one
+      :locked_topic:
+        :type: :xpath
+        :expression: "//ul[@class='menu']/li[text()[contains(., 'Topic locked')]]"
+        :returns: :one
+      :my_topic:
+        :type: :xpath
+        :expression: "//div[@id='body_wrapper']//h3[1][text()[contains(., '(you)')]]/following-sibling::div"
+        :returns: :one
+      :my_replies:
+        :type: :xpath
+        :expression: "//h3[text()[contains(., '(you)')]]/following-sibling::div[@class='body']"
+        :returns: :many
+      :replies_to_me:
+        :type: :xpath
+        :expression: "//span[@class='unimportant' and contains(text(),'(you)')][preceding::div[@class='body'][1]]"
+        :returns: :many

@@ -129,10 +129,9 @@ Metrics/CyclomaticComplexity:
 Metrics/LineLength:
   Max: 120
 
-# this code is procedural; higher limits than default!
+# this code is procedural; skip!
 Metrics/MethodLength:
-  CountComments: false  # count full line comments?
-  Max: 40
+  Enabled: false
 
 # this code is procedural; higher limits than default!
 Metrics/PerceivedComplexity:

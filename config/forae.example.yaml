@@ -1,13 +1,13 @@
-:foræ:
+:forae:
   - :fqdn: example.org
     :secure: false
-    :test_on_init: false
+    :test_on_init: true
     :cookies_auto_load: false
     :app_root: /
     :driver: :firefox
     :platform_type: Test
     :log_to: log/test.log
-    :log_level: :info
+    :log_level: :debug
     :dom_selectors:
     :cookies:
     # times in seconds; integers expected

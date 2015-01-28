@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" id="top">
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="robots" content="noarchive" />
+    <meta name="description" content="description" />
+    <meta name="keywords" content="bbs, board, anonymous, free, debate, discuss" />
+    <title>Topic: this is my topic — MiniBBS</title>
+</head>
+
+<body class="">
+    <h1 class="top_text" id="logo">
+			<a rel="index" href="/" class="help_cursor" title="MiniBBS">MiniBBS</a>
+		</h1>
+    <div id="main_menu_wrapper">
+        <ul id="main_menu" class="menu">
+            <li class="hot_topics"><a href="/hot_topics">Hot</a> </li>
+            <li class="topics"><a href="/topics">Topics</a> </li>
+            <li class="bumps"><a href="/bumps">Bumps</a> </li>
+            <li class="replies"><a href="/replies">Replies</a> </li>
+            <li class="new_topic"><a href="/new_topic">New topic</a> </li>
+            <li class="history"><a href="/history">History</a> </li>
+            <li class="watchlist"><a href="/watchlist">Watchlist</a> </li>
+            <li class="bulletins"><a href="/bulletins">Bulletins</a> </li>
+            <li class="events"><a href="/events">Events</a> </li>
+            <li class="folks"><a href="/folks">Folks</a> </li>
+            <li class="search"><a href="/search">Search</a> </li>
+            <li class="shuffle"><a href="/shuffle">Shuffle</a> </li>
+            <li class="stuff"><a href="/stuff">Stuff</a> </li>
+        </ul>
+    </div>
+    <div id="body_wrapper">
+        <h2>Topic: this is my topic	</h2>
+        <form id="dummy_form" class="noscreen" action="" method="post">
+            <div class="noscreen">
+                <input type="hidden" name="CSRF_token" value="4f042262a4fb31b0da4e6553458ca5e2" /> </div>
+            <div>
+                <input type="hidden" name="some_var" value="" /> </div>
+        </form>
+        <h3>Anonymous <strong>A</strong> (you) started this discussion <strong><span class="help" title="2015-01-25 23:21:18 UTC — Sunday the 25th of January 2015, 11:21 PM">46 seconds ago</span> <span class="reply_id unimportant"><a href="/topic/31779">#31,779</a></span></strong></h3>
+        <div class="body">this is my body
+            <ul class="menu">
+                <li><a class="editButton editOP" href="/edit_topic/31779">Edit</a> </li>
+                <li><a href="/watch_topic/31779" onclick="return submitDummyForm('/watch_topic/31779', 'id', 31779, 'Add this topic to the watchlist?');">Watch</a> </li>
+                <li><a href="/new_reply/31779/quote_topic" onclick="quickQuote('OP', '%3E+this+is+my+body');return false;">Quote</a> </li>
+                <li><a href="/trivia_for_topic/31779" class="help" title="0 replies">1 visit</a> </li>
+            </ul>
+        </div>
+        <ul class="menu">
+            <li><a href="/new_reply/31779" onclick="$('#quick_reply').toggle();$('#qr_text').get(0).scrollIntoView(true);$('#qr_text').focus(); return false;">Reply</a> <span class="reply_id unimportant"><a href="#top">[Top]</a></span> </li>
+        </ul>
+        <div id="quick_reply" class="noscreen">
+            <form enctype="multipart/form-data" action="/new_reply/31779/4cbc7626716ad8c6dde29e1288a9b625" method="post">
+                <div class="noscreen">
+                    <input type="hidden" name="CSRF_token" id="CSRF_token" value="4f042262a4fb31b0da4e6553458ca5e2" /> </div>
+                <input name="form_sent" type="hidden" value="1" />
+                <input name="e-mail" type="hidden" />
+                <input name="start_time" type="hidden" value="1422228124" />
+                <input name="image" type="hidden" value="" />
+                <div class="row">
+                    <label for="name">Name</label>:
+                    <input class="inline" id="name" name="name" type="text" size="30" placeholder="name #tripcode" maxlength="30" tabindex="2" value=""> </div>
+                <textarea class="inline markup_editor" name="body" id="qr_text" rows="5" cols="90" tabindex="3"></textarea>
+                <input type="file" name="image" id="image" tabindex="5" />
+                <label for="imageurl">Imgur URL:</label>
+                <input class="inline" type="text" name="imageurl" id="imageurl" size="21" placeholder="http://i.imgur.com/rcrlO.jpg" /> <a href="javascript:document.getElementById('imgurupload').click()" id="uploader">[upload]</a>
+                <br />
+                <input type="submit" name="preview" tabindex="6" value="Preview" class="inline" />
+                <input type="submit" name="post" tabindex="4" value="Post" class="inline">
+                <p>Please familiarise yourself with the <a href="/rules" target="_blank">rules</a> and <a href="/markup_syntax" target="_blank">markup syntax</a> before posting, also keep in mind you can minify URLs using <a href="/link" target="_blank">MiniURL</a> and generate image macros using <a href="/macro" target="_blank">MiniMacro</a>.</p>
+            </form>
+            <input style="visibility: hidden; width: 0px; height: 0px;" type="file" id="imgurupload" onchange="uploadImage(this.files[0])"> </div>
+        <div id="bottom"></div>
+        <a id='snapback_link' style='display: none' class='help_cursor' onclick='return popSnapbackLink();' title='Click me to snap back!' href='#'> <strong>↕</strong> <span>&nbsp;</span> </a>
+</body>
+
+</html>

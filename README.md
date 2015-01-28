@@ -17,13 +17,15 @@ gem install bundler
 bundle
 ```
 
-Use the example foræ YAML to build your own fora definitions.
+Use the example forae YAML to build your own fora definitions.
 
 ```
-mv config/foræ.example.yaml config/foræ.yaml
+mv config/forae.example.yaml config/forae.yaml
 ```
 
 ## Run it!
+
+After installing dependencies, perform this command to start the application:
 
 `ruby fora_mora.rb`
 
@@ -39,4 +41,8 @@ NOTE: since the code is procedural, RuboCop style defaults have been loosened to
 
 Run the suite with this command:
 
-`rake spec`
+`bundle exec rake spec`
+
+Perform code coverage analysis with this command:
+
+`bundle exec rake coverage`
