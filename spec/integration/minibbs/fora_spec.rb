@@ -73,7 +73,7 @@ describe Fora, selenium: true, integration: true, unit: false do
                 expect(subject.topics(root_html_file).length).to eq 20
               end
 
-              it 'contains Selenium::Element objects' do
+              it 'contains Selenium::WebDriver::Element objects' do
                 subject.topics(root_html_file).each do |e|
                   expect(e).to be_a Selenium::WebDriver::Element
                 end
@@ -292,9 +292,8 @@ describe Fora, selenium: true, integration: true, unit: false do
                 expect(subject.my_replies).to be_an Array
               end
 
-              it 'is empty' do
-                skip 'REVIEW: should the original post be included? (it probably should)'
-                expect(subject.my_replies).to be_empty
+              it 'contains 1 reply' do
+                expect(subject.my_replies.length).to eq 1
               end
             end
 
@@ -309,20 +308,24 @@ describe Fora, selenium: true, integration: true, unit: false do
             end
 
             describe '#viewing_a_topic?' do
-              it 'is truthy' do
-                expect(subject.viewing_a_topic?).to be_truthy
+              it 'is true' do
+                expect(subject.viewing_a_topic?).to eq true
               end
             end
 
             describe '#topic_is_locked?' do
-              it 'is falsey' do
-                expect(subject.topic_is_locked?).to be_falsey
+              it 'is false' do
+                expect(subject.topic_is_locked?).to eq false
               end
             end
 
             describe '#viewing_my_topic?' do
               it 'is truthy' do
                 expect(subject.viewing_my_topic?).to be_truthy
+              end
+
+              it 'returns the topic post' do
+                expect(subject.viewing_my_topic?).to be_a(Selenium::WebDriver::Element)
               end
             end
           end
@@ -369,21 +372,20 @@ describe Fora, selenium: true, integration: true, unit: false do
             end
 
             describe '#viewing_a_topic?' do
-              it 'is truthy' do
-                skip 'REVIEW: should this be true? (it probably should)'
-                expect(subject.viewing_a_topic?).to be_truthy
+              it 'is false' do
+                expect(subject.viewing_a_topic?).to eq false
               end
             end
 
             describe '#topic_is_locked?' do
-              it 'is truthy' do
-                expect(subject.topic_is_locked?).to be_truthy
+              it 'is true' do
+                expect(subject.topic_is_locked?).to eq true
               end
             end
 
             describe '#viewing_my_topic?' do
-              it 'is falsey' do
-                expect(subject.viewing_my_topic?).to be_falsey
+              it 'is false' do
+                expect(subject.viewing_my_topic?).to eq false
               end
             end
           end
@@ -418,7 +420,7 @@ describe Fora, selenium: true, integration: true, unit: false do
                 expect(subject.my_replies.length).to eq 1
               end
 
-              it 'contains Selenium::Element objects' do
+              it 'contains Selenium::WebDriver::Element objects' do
                 subject.my_replies.each do |e|
                   expect(e).to be_a Selenium::WebDriver::Element
                 end
@@ -436,21 +438,20 @@ describe Fora, selenium: true, integration: true, unit: false do
             end
 
             describe '#viewing_a_topic?' do
-              it 'is truthy' do
-                expect(subject.viewing_a_topic?).to be_truthy
+              it 'is true' do
+                expect(subject.viewing_a_topic?).to eq true
               end
             end
 
             describe '#topic_is_locked?' do
-              it 'is falsey' do
-                expect(subject.topic_is_locked?).to be_falsey
+              it 'is false' do
+                expect(subject.topic_is_locked?).to eq false
               end
             end
 
             describe '#viewing_my_topic?' do
-              it 'is falsey' do
-                skip 'FIXME: greedy selector'
-                expect(subject.viewing_my_topic?).to be_falsey
+              it 'is false' do
+                expect(subject.viewing_my_topic?).to eq false
               end
             end
           end
@@ -485,7 +486,7 @@ describe Fora, selenium: true, integration: true, unit: false do
                 expect(subject.my_replies.length).to eq 2
               end
 
-              it 'contains Selenium::Element objects' do
+              it 'contains Selenium::WebDriver::Element objects' do
                 subject.my_replies.each do |e|
                   expect(e).to be_a Selenium::WebDriver::Element
                 end
@@ -501,7 +502,7 @@ describe Fora, selenium: true, integration: true, unit: false do
                 expect(subject.replies_to_me.length).to eq 1
               end
 
-              it 'contains Selenium::Element objects' do
+              it 'contains Selenium::WebDriver::Element objects' do
                 subject.replies_to_me.each do |e|
                   expect(e).to be_a Selenium::WebDriver::Element
                 end
@@ -509,21 +510,20 @@ describe Fora, selenium: true, integration: true, unit: false do
             end
 
             describe '#viewing_a_topic?' do
-              it 'is truthy' do
-                expect(subject.viewing_a_topic?).to be_truthy
+              it 'is true' do
+                expect(subject.viewing_a_topic?).to eq true
               end
             end
 
             describe '#topic_is_locked?' do
-              it 'is falsey' do
-                expect(subject.topic_is_locked?).to be_falsey
+              it 'is false' do
+                expect(subject.topic_is_locked?).to eq false
               end
             end
 
             describe '#viewing_my_topic?' do
-              it 'is falsey' do
-                skip 'FIXME: greedy selector'
-                expect(subject.viewing_my_topic?).to be_falsey
+              it 'is false' do
+                expect(subject.viewing_my_topic?).to eq false
               end
             end
           end

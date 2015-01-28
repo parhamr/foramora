@@ -39,7 +39,7 @@
         :returns: :one
       :my_topic:
         :type: :xpath
-        :expression: "//h3[text()[contains(., '(you)')]]/following-sibling::div"
+        :expression: "//div[@id='body_wrapper']//h3[1][text()[contains(., '(you)')]]/following-sibling::div"
         :returns: :one
       :my_replies:
         :type: :xpath
