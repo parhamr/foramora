@@ -15,15 +15,16 @@ module Forae
       :locked_topic_selector,
       :my_topic_selector,
       :my_replies_selector,
-      :replies_to_me_selector
+      :replies_to_me_selector,
+      :current_url
 
     # NOTE: options has needs the minimal requirements; see forae.example.yaml
     def initialize(*args)
-      options = args.extract_options!
-      @fora = options[:fora]
-      @logger = fora.logger
+      options =       args.extract_options!
+      @fora =         options[:fora]
+      @logger =       fora.logger
       @known_topics = {}
-      logger.debug "#{self.class} initialized! #{inspect}"
+      logger.debug    "#{self.class} initialized! #{inspect}"
     end
 
     delegate :driver, to: :fora, allow_nil: true
@@ -31,14 +32,14 @@ module Forae
     # NOTE: the remote resource is expected to change; be careful with caches
     def topics_at(url)
       logger.info 'Finding current topics...'
-      visit(url)
+      visit url
       topic_elements = if topics_links_selector.blank?
                          logger.warn "zero DOM selectors defined for #{@fora.fqdn}!"
                          []
                        else
-                         call_driver_finder(topics_links_selector)
+                         call_driver_finder(topics_links_selector.merge(selector_name: :topics_links_selector))
                        end
-      store_topics(topic_elements)
+      store_topics topic_elements
     end
 
     # HTTP GET requests
@@ -46,6 +47,9 @@ module Forae
       logger.info "Loading #{url}"
       driver.get url.to_s
       logger.info "#{driver.title.inspect}"
+      # NOTE: updated after calling so exceptions skip the assignment
+      current_url = url
+      ingest_content
       # common: Errno::ECONNREFUSED
     rescue => e
       logger.error "Failed to load! #{e.class}: #{e.message} (#{e.backtrace[0]})"
@@ -68,7 +72,7 @@ module Forae
                         logger.warn "No XPath selectors found for 'topic page'"
                         nil
                       else
-                        call_driver_finder(topic_page_selector)
+                        call_driver_finder(topic_page_selector.merge(selector_name: :topic_page_selector))
                       end
       if topic_element.present?
         logger.info 'This is a topic!'
@@ -87,7 +91,7 @@ module Forae
                                  logger.warn "No XPath selectors found for 'locked topic'"
                                  false
                                else
-                                 call_driver_finder(locked_topic_selector)
+                                 call_driver_finder(locked_topic_selector.merge(selector_name: :locked_topic_selector))
                                end
                              end
       if locked_topic_element.present?
@@ -110,7 +114,7 @@ module Forae
                     # Default to empty object
                     nil
                   else
-                    call_driver_finder(my_topic_selector)
+                    call_driver_finder(my_topic_selector.merge(selector_name: :my_topic_selector))
                   end
       logger.info((returning ? 'This is my topic!' : 'This is not my topic.'))
       returning
@@ -124,7 +128,7 @@ module Forae
         # Default to empty set
         []
       else
-        call_driver_finder(my_replies_selector)
+        call_driver_finder(my_replies_selector.merge(selector_name: :my_replies_selector))
       end
     end
 
@@ -136,7 +140,7 @@ module Forae
         # Default to empty set
         []
       else
-        call_driver_finder(replies_to_me_selector)
+        call_driver_finder(replies_to_me_selector.merge(selector_name: :replies_to_me_selector))
       end
     end
 
@@ -219,6 +223,7 @@ module Forae
         logger.fatal msg
         raise ArgumentError, msg
       end
+      returning = nil
       selector_config.with_indifferent_access
       # TODO: validate expression when type is :xpath?
       search_type = selector_config.fetch(:type, :css)
@@ -227,32 +232,33 @@ module Forae
       logger.debug "search_expression: #{search_expression.inspect} (#{search_expression.class})"
       search_returns = selector_config.fetch(:returns, :many)
       logger.debug "search_returns: #{search_returns.inspect} (#{search_returns.class})"
-      case search_expression
-      when Array
-        # minor recursion!
-        search_expression.each do |e|
-          call_driver_finder(
-            type:       search_type,
-            expression: e.to_s,
-            returns:    search_returns
-          )
-        end
-      when String, Symbol
-        case search_returns.to_s
-        when 'one'
-          driver.find_element(search_type, search_expression)
-        when 'many'
-          driver.find_elements(search_type, search_expression)
-        else
-          msg = "Invalid :returns received (:one or :many expected): #{search_returns.inspect}"
-          logger.fatal msg
-          raise ArgumentError, msg
-        end
-      else
-        msg = "Invalid expression received (Array, Symbol, or String expected): #{search_expression.class}"
-        logger.fatal msg
-        raise ArgumentError, msg
-      end
+      returning = case search_expression
+                  when Array
+                    # minor recursion!
+                    search_expression.each do |e|
+                      call_driver_finder(
+                        type:       search_type,
+                        expression: e.to_s,
+                        returns:    search_returns
+                      )
+                    end
+                  when String, Symbol
+                    case search_returns.to_s
+                    when 'one'
+                      driver.find_element(search_type, search_expression)
+                    when 'many'
+                      driver.find_elements(search_type, search_expression)
+                    else
+                      msg = "Invalid :returns received (:one or :many expected): #{search_returns.inspect}"
+                      logger.fatal msg
+                      raise ArgumentError, msg
+                    end
+                  else
+                    msg = "Invalid expression received (Array, Symbol, or String expected): #{search_expression.class}"
+                    logger.fatal msg
+                    raise ArgumentError, msg
+                  end
+      returning
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       # Normal! This query didn’t find anything
       logger.info "#{e.class}: #{e.message}"
@@ -261,6 +267,10 @@ module Forae
       # Abnormal! This query should be fixed
       logger.error "#{e.class}: #{e.message}"
       nil
+    end
+
+    def ingest_content
+      # store: driver.page_source
     end
   end
 end

@@ -62,6 +62,7 @@ class Fora
     @logger        = Logging.logger(@fora[:log_to].present? ? @fora[:log_to] : STDOUT)
     logger.level   = (@fora[:log_level].present? ? @fora[:log_level] : :warn)
     @driver        = Selenium::WebDriver.for options[:driver]
+    logger.debug   "Driver: #{driver.inspect}"
     # https?
     @secure        = options[:secure]
     # only if it violates the norm (80 or 443)

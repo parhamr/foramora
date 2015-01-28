@@ -31,6 +31,9 @@ class ForaMora
 
     puts 'Done! Cleaning up…'
     sleep 4
+  rescue => e
+    STDERR << "#{e.class}: #{e.message} (#{e.backtrace[0]})\n"
+    raise e
   ensure
     # cleanup!
     @fora.try(:teardown)

@@ -160,7 +160,7 @@ DEPENDENCIES
   guard-rspec
   guard-rubocop
   highline
-  i18n (~> 0.7.0)
+  i18n
   launchy
   listen
   logging
