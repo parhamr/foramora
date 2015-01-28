@@ -72,6 +72,7 @@ class Mora
   end
 
   def reply!(options = {})
+    # TODO
   end
 
   def read_this_page
@@ -83,11 +84,7 @@ class Mora
     end
     elapsed_time = (Time.now.utc.to_f - start_time)
     logger.info "Time to read the current page: #{pluralize(elapsed_time, 'second')}."
-    if elapsed_time < TOPIC_READING_PERIOD
-      sleep_time = TOPIC_READING_PERIOD - elapsed_time
-      logger.debug "Continuing to read for #{pluralize(sleep_time, 'second')}"
-      sleep sleep_time
-    end
+    true
   end
 
   def check_my_replies
