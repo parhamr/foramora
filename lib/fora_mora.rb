@@ -33,6 +33,6 @@ class ForaMora
     sleep 4
   ensure
     # cleanup!
-    @fora.teardown
+    @fora.try(:teardown)
   end
 end
