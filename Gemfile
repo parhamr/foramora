@@ -19,6 +19,12 @@ gem 'logging'
 gem 'launchy'
 gem 'highline'
 
+# persistence layers
+gem 'pg'
+
+# data modeling
+gem 'awesome_nested_set'
+
 # testing
 group :test, :development do
   gem 'pry' # when debugging
