@@ -22,6 +22,7 @@
 
 # configs
 config/forae.yaml
+config/database.yaml
 
 !.gitkeep
 log/

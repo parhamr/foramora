@@ -1,0 +1,17 @@
+defaults: &defaults
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: localhost
+
+development:
+  <<: *defaults
+  # username: user
+  # password: hunter2
+  database: foramora_development
+
+test:
+  <<: *defaults
+  database: foramora_test
+  # username: user
+  # password: hunter2
