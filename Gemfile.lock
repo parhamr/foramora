@@ -163,6 +163,8 @@ PLATFORMS
 
 DEPENDENCIES
   actionview
+  activemodel
+  activerecord
   activesupport
   awesome_nested_set
   curb

@@ -20,6 +20,8 @@ gem 'launchy'
 gem 'highline'
 
 # persistence layers
+gem 'activerecord'
+gem 'activemodel'
 gem 'pg'
 
 # data modeling
