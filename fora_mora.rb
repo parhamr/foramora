@@ -10,11 +10,7 @@ Bundler.setup(:default)
 
 # attempts cross platform support
 path = File.join('.', 'lib', 'fora_mora')
-# build the require statement
-dirname = File.dirname(path)
-basename = File.basename(path, '.rb')
-require_statement = File.join(dirname, basename)
+require File.join(File.dirname(path), File.basename(path, '.rb'))
 
-require require_statement
-
+ForaMora.bootstrap
 ForaMora.run

@@ -21,6 +21,10 @@ end
 
 #
 class ForaMora
+  def self.bootstrap
+    # establish_connection adapter: 'sqlite3', database: 'foobar.db'
+  end
+
   def self.run
     # TODO: this class might be the appropriate location for the Selenium @driver object
     # (because it does not need repeated initialization in tests)
