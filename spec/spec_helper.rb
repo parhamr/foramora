@@ -45,7 +45,9 @@ RSpec.configure do |config|
   # find all of these paths
   Dir[
     # attempts cross platform support
-    File.join('.', 'lib', '**', '*.rb'),
+    File.join('.', 'lib', '*.rb'),
+    File.join('.', 'lib', 'forae', '*.rb'),
+    File.join('.', 'lib', 'fora_mora', '*.rb'),
     File.join('.', 'spec', 'support', '**', '*.rb')
   ].sort.each do |file|
     # build the require statement

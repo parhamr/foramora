@@ -8,8 +8,10 @@ require 'pry'
 # load the first order of application code
 # FIXME: cross-platform support?
 Dir[
-  './config/**/*.rb',
-  './lib/**/*.rb',
+  File.join('.', 'lib', '*.rb'),
+  File.join('.', 'lib', 'forae', '*.rb'),
+  File.join('.', 'lib', 'fora_mora', '*.rb'),
+  File.join('.', 'config', '**', '*.rb'),
 ].sort.each do |file|
   # build the require statement
   dirname = File.dirname(file)
