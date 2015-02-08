@@ -15,6 +15,7 @@ describe ForaMora::Segmenter::KissTiborAndStrunkSegmenter do
   let(:uk_english_quote) { '"Humpty Dumpty sat on a wall".' }
   let(:bad_ellipsis) { 'Bad... ellipsis.' }
   let(:bad_em_dash) { 'This is--you see--an em dash.' }
+  let(:stock_news) { 'CELLULAR COMMUNICATIONS INC. sold 1,550,000 common shares at $21.75 each yesterday, according to lead underwriter L.F. Rothschild & Co.' }
   let(:two_sentences_string_abbreviations) { 'The quick brown U.S.A fox jumps over the lazy Dr. Dog. Dr. Dog remained asleep.' }
   let(:two_sentences_string_initial_lower) { 'This is a stentence. bell hooks is a person. iMac is a trademark' }
 
