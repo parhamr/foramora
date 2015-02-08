@@ -19,6 +19,9 @@ gem 'logging'
 gem 'launchy'
 gem 'highline'
 
+# language
+gem 'punkt-segmenter', git: 'https://github.com/parhamr/punkt-segmenter.git'
+
 # testing
 group :test, :development do
   gem 'pry' # when debugging

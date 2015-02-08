@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/parhamr/punkt-segmenter.git
+  revision: 1ba7ae929b543c044d7ea388f3ddcf8d7008466d
+  specs:
+    punkt-segmenter (0.9.1)
+      unicode_utils (>= 1.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -145,6 +152,7 @@ GEM
       hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unicode_utils (1.4.0)
     websocket (1.2.1)
 
 PLATFORMS
@@ -167,6 +175,7 @@ DEPENDENCIES
   multi_json
   nokogiri
   pry
+  punkt-segmenter!
   rake
   rspec-its
   sanitize
