@@ -70,6 +70,11 @@ describe Mora, selenium: true, integration: true, unit: false do
                 expect(subject.read_this_page).to eq true
               end
 
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
+              end
+
               it 'does not call #check_my_replies' do
                 expect(subject).to_not receive(:check_my_replies)
                 subject.read_this_page
@@ -85,6 +90,11 @@ describe Mora, selenium: true, integration: true, unit: false do
             describe '#read_this_page' do
               it 'is true' do
                 expect(subject.read_this_page).to eq true
+              end
+
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
               end
 
               it 'calls #check_my_replies' do
@@ -104,6 +114,11 @@ describe Mora, selenium: true, integration: true, unit: false do
                 expect(subject.read_this_page).to eq true
               end
 
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
+              end
+
               it 'does not call #check_my_replies' do
                 expect(subject).to_not receive(:check_my_replies)
                 subject.read_this_page
@@ -119,6 +134,11 @@ describe Mora, selenium: true, integration: true, unit: false do
             describe '#read_this_page' do
               it 'is true' do
                 expect(subject.read_this_page).to eq true
+              end
+
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
               end
 
               it 'calls #check_my_replies' do
@@ -138,6 +158,11 @@ describe Mora, selenium: true, integration: true, unit: false do
                 expect(subject.read_this_page).to eq true
               end
 
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
+              end
+
               it 'does not call #check_my_replies' do
                 expect(subject).to_not receive(:check_my_replies)
                 subject.read_this_page
@@ -155,6 +180,11 @@ describe Mora, selenium: true, integration: true, unit: false do
                 expect(subject.read_this_page).to eq true
               end
 
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
+              end
+
               it 'calls #check_my_replies' do
                 expect(subject).to receive(:check_my_replies)
                 subject.read_this_page
@@ -170,6 +200,11 @@ describe Mora, selenium: true, integration: true, unit: false do
             describe '#read_this_page' do
               it 'is true' do
                 expect(subject.read_this_page).to eq true
+              end
+
+              it 'calls #viewing_a_topic?' do
+                expect(subject).to receive(:viewing_a_topic?)
+                subject.read_this_page
               end
 
               it 'calls #check_my_replies' do

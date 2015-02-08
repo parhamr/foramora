@@ -116,6 +116,30 @@ module Forae
       returning
     end
 
+    # selection from current page of all authors (unique names)
+    def all_authors
+      logger.info 'Looking for posts on this page...'
+      if all_authors_selector.blank?
+        logger.warn "No XPath selectors found for 'all authors'"
+        # Default to empty set
+        []
+      else
+        call_driver_finder(all_authors_selector)
+      end
+    end
+
+    # selection from current page of all posts (replies + topics)
+    def visible_posts
+      logger.info 'Looking for posts on this page...'
+      if visible_posts_selector.blank?
+        logger.warn "No XPath selectors found for 'visible posts'"
+        # Default to empty set
+        []
+      else
+        call_driver_finder(visible_posts_selector)
+      end
+    end
+
     # selection from current page of replies written by me
     def my_replies
       logger.info 'Looking for replies I have written...'
@@ -190,6 +214,18 @@ module Forae
       @my_topic_selector ||= fora.dom_selectors.
                              fetch(:my_topic, {}).
                              try(:with_indifferent_access)
+    end
+
+    def visible_posts_selector
+      @visible_posts_selector ||= fora.dom_selectors.
+                                  fetch(:visible_posts, {}).
+                                  try(:with_indifferent_access)
+    end
+
+    def all_authors_selector
+      @all_authors_selector ||= fora.dom_selectors.
+                                fetch(:all_authors, {}).
+                                try(:with_indifferent_access)
     end
 
     def my_replies_selector

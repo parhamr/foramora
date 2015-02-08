@@ -45,7 +45,7 @@ describe Forae::Test, selenium: false do
         end
       end
 
-      describe 'topic_is_locked?' do
+      describe '#topic_is_locked?' do
         #
         it 'does not raise_error' do
           expect { subject.topic_is_locked? }.to_not raise_error
@@ -55,7 +55,7 @@ describe Forae::Test, selenium: false do
           expect(subject.topic_is_locked?).to be_truthy
         end
 
-        context '(and viewing_a_topic? is true)' do
+        context '(and #viewing_a_topic? is true)' do
           before do
             expect(subject).to receive(:viewing_a_topic?).
               at_least(:once).
@@ -88,7 +88,7 @@ describe Forae::Test, selenium: false do
         end
       end
 
-      describe 'viewing_my_topic?' do
+      describe '#viewing_my_topic?' do
         #
         it 'does not raise_error' do
           expect { subject.viewing_my_topic? }.to_not raise_error
@@ -99,7 +99,29 @@ describe Forae::Test, selenium: false do
         end
       end
 
-      describe 'my_replies' do
+      describe '#all_authors' do
+        #
+        it 'does not raise_error' do
+          expect { subject.all_authors }.to_not raise_error
+        end
+
+        it 'is Array' do
+          expect(subject.all_authors).to be_an Array
+        end
+      end
+
+      describe '#visible_posts' do
+        #
+        it 'does not raise_error' do
+          expect { subject.visible_posts }.to_not raise_error
+        end
+
+        it 'is Array' do
+          expect(subject.visible_posts).to be_an Array
+        end
+      end
+
+      describe '#my_replies' do
         #
         it 'does not raise_error' do
           expect { subject.my_replies }.to_not raise_error
@@ -110,7 +132,7 @@ describe Forae::Test, selenium: false do
         end
       end
 
-      describe 'replies_to_me' do
+      describe '#replies_to_me' do
         #
         it 'does not raise_error' do
           expect { subject.replies_to_me }.to_not raise_error
@@ -122,28 +144,42 @@ describe Forae::Test, selenium: false do
       end
 
       describe '(protected methods)' do
-        describe 'topic_page_selector' do
+        describe '#topic_page_selector' do
           #
           it 'is a Hash' do
             expect(subject.send(:topic_page_selector)).to be_a Hash
           end
         end
 
-        describe 'topics_links_selector' do
+        describe '#topics_links_selector' do
           #
           it 'is a Hash' do
             expect(subject.send(:topics_links_selector)).to be_a Hash
           end
         end
 
-        describe 'my_topic_selector' do
+        describe '#my_topic_selector' do
           #
           it 'is a Hash' do
             expect(subject.send(:my_topic_selector)).to be_a Hash
           end
         end
 
-        describe 'my_replies_selector' do
+        describe '#all_authors_selector' do
+          #
+          it 'is a Hash' do
+            expect(subject.send(:all_authors_selector)).to be_a Hash
+          end
+        end
+
+        describe '#visible_posts_selector' do
+          #
+          it 'is a Hash' do
+            expect(subject.send(:visible_posts_selector)).to be_a Hash
+          end
+        end
+
+        describe '#my_replies_selector' do
           #
           it 'is a Hash' do
             expect(subject.send(:my_replies_selector)).to be_a Hash
@@ -154,7 +190,7 @@ describe Forae::Test, selenium: false do
           end
         end
 
-        describe 'replies_to_me_selector' do
+        describe '#replies_to_me_selector' do
           #
           it 'is a Hash' do
             expect(subject.send(:replies_to_me_selector)).to be_a Hash
@@ -165,7 +201,7 @@ describe Forae::Test, selenium: false do
           end
         end
 
-        describe 'locked_topic_selector' do
+        describe '#locked_topic_selector' do
           #
           it 'is a Hash' do
             expect(subject.send(:locked_topic_selector)).to be_a Hash
@@ -193,7 +229,7 @@ describe Forae::Test, selenium: false do
           end
         end
 
-        describe 'topic_is_locked?' do
+        describe '#topic_is_locked?' do
           #
           it 'does not raise_error' do
             expect { subject.topic_is_locked? }.to_not raise_error
@@ -216,7 +252,7 @@ describe Forae::Test, selenium: false do
           end
         end
 
-        describe 'viewing_my_topic?' do
+        describe '#viewing_my_topic?' do
           #
           it 'does not raise_error' do
             expect { subject.viewing_my_topic? }.to_not raise_error
@@ -227,7 +263,29 @@ describe Forae::Test, selenium: false do
           end
         end
 
-        describe 'my_replies' do
+        describe '#all_authors' do
+          #
+          it 'does not raise_error' do
+            expect { subject.all_authors }.to_not raise_error
+          end
+
+          it 'is empty' do
+            expect(subject.all_authors).to be_empty
+          end
+        end
+
+        describe '#visible_posts' do
+          #
+          it 'does not raise_error' do
+            expect { subject.visible_posts }.to_not raise_error
+          end
+
+          it 'is empty' do
+            expect(subject.visible_posts).to be_empty
+          end
+        end
+
+        describe '#my_replies' do
           #
           it 'does not raise_error' do
             expect { subject.my_replies }.to_not raise_error
@@ -238,7 +296,7 @@ describe Forae::Test, selenium: false do
           end
         end
 
-        describe 'replies_to_me' do
+        describe '#replies_to_me' do
           #
           it 'does not raise_error' do
             expect { subject.replies_to_me }.to_not raise_error
@@ -250,42 +308,42 @@ describe Forae::Test, selenium: false do
         end
 
         describe '(protected methods)' do
-          describe 'topic_page_selector' do
+          describe '#topic_page_selector' do
             #
             it 'has safe defaults' do
               expect(subject.send(:topic_page_selector)).to be_blank
             end
           end
 
-          describe 'topics_links_selector' do
+          describe '#topics_links_selector' do
             #
             it 'has safe defaults' do
               expect(subject.send(:topics_links_selector)).to be_blank
             end
           end
 
-          describe 'my_topic_selector' do
+          describe '#my_topic_selector' do
             #
             it 'has safe defaults' do
               expect(subject.send(:my_topic_selector)).to be_blank
             end
           end
 
-          describe 'my_replies_selector' do
+          describe '#my_replies_selector' do
             #
             it 'has safe defaults' do
               expect(subject.send(:my_replies_selector)).to be_blank
             end
           end
 
-          describe 'replies_to_me_selector' do
+          describe '#replies_to_me_selector' do
             #
             it 'has safe defaults' do
               expect(subject.send(:replies_to_me_selector)).to be_blank
             end
           end
 
-          describe 'locked_topic_selector' do
+          describe '#locked_topic_selector' do
             #
             it 'has safe defaults' do
               expect(subject.send(:locked_topic_selector)).to be_blank

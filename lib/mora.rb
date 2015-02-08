@@ -27,8 +27,9 @@ class Mora
     @browsing_history = []
   end
 
+  # NOTE: these queries are not cached
   delegate :topic_is_locked?, to: :fora
-  delegate :viewing_a_topic_page?, to: :fora
+  delegate :viewing_a_topic?, to: :fora
   delegate :viewing_my_topic?, to: :fora
 
   def simulate!
@@ -78,9 +79,13 @@ class Mora
   def read_this_page
     start_time = Time.now.utc.to_f
     logger.debug 'Reading current page...'
-    unless topic_is_locked?
-      viewing_my_topic?
-      check_my_replies
+    if viewing_a_topic?
+      unless topic_is_locked?
+        viewing_my_topic?
+        check_my_replies
+      end
+    else
+      logger.warn 'EDGE CASE: not viewing a topic'
     end
     elapsed_time = (Time.now.utc.to_f - start_time)
     logger.info "Time to read the current page: #{pluralize(elapsed_time, 'second')}."

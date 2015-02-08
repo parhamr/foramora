@@ -142,9 +142,12 @@ class Fora
   delegate :visit_random_topic, to: :platform, allow_nil: true
   delegate :known_topics, to: :platform, allow_nil: true
   delegate :start_new_topic, to: :platform, allow_nil: true
+  # NOTE: these queries are not cached
   delegate :viewing_a_topic?, to: :platform, allow_nil: true
   delegate :topic_is_locked?, to: :platform, allow_nil: true
   delegate :viewing_my_topic?, to: :platform, allow_nil: true
+  delegate :all_authors, to: :platform, allow_nil: true
+  delegate :visible_posts, to: :platform, allow_nil: true
   delegate :my_replies, to: :platform, allow_nil: true
   delegate :replies_to_me, to: :platform, allow_nil: true
 

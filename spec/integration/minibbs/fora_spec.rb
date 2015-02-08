@@ -107,13 +107,23 @@ describe Fora, selenium: true, integration: true, unit: false do
               end
             end
 
-            describe '#my_replies' do
+            describe '#all_authors' do
               it 'is an Array' do
-                expect(subject.my_replies).to be_an Array
+                expect(subject.all_authors).to be_an Array
               end
 
               it 'is empty' do
-                expect(subject.my_replies).to be_empty
+                expect(subject.all_authors).to be_empty
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'is empty' do
+                expect(subject.visible_posts).to be_empty
               end
             end
 
@@ -164,6 +174,32 @@ describe Fora, selenium: true, integration: true, unit: false do
             describe '#known_topics' do
               it 'is a Hash' do
                 expect(subject.known_topics).to be_a Hash
+              end
+            end
+
+            describe '#all_authors' do
+              it 'is an Array' do
+                expect(subject.all_authors).to be_an Array
+              end
+
+              it 'finds two elements' do
+                expect(subject.all_authors.length).to eq 2
+              end
+
+              it 'contains Selenium::WebDriver::Element objects' do
+                subject.all_authors.each do |e|
+                  expect(e).to be_a Selenium::WebDriver::Element
+                end
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'finds 2 elements' do
+                expect(subject.visible_posts.length).to eq 2
               end
             end
 
@@ -227,6 +263,32 @@ describe Fora, selenium: true, integration: true, unit: false do
               end
             end
 
+            describe '#all_authors' do
+              it 'is an Array' do
+                expect(subject.all_authors).to be_an Array
+              end
+
+              it 'finds one element' do
+                expect(subject.all_authors.length).to eq 1
+              end
+
+              it 'contains Selenium::WebDriver::Element objects' do
+                subject.all_authors.each do |e|
+                  expect(e).to be_a Selenium::WebDriver::Element
+                end
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'finds 1 element' do
+                expect(subject.visible_posts.length).to eq 1
+              end
+            end
+
             describe '#my_replies' do
               it 'is an Array' do
                 expect(subject.my_replies).to be_an Array
@@ -284,6 +346,32 @@ describe Fora, selenium: true, integration: true, unit: false do
             describe '#known_topics' do
               it 'is a Hash' do
                 expect(subject.known_topics).to be_a Hash
+              end
+            end
+
+            describe '#all_authors' do
+              it 'is an Array' do
+                expect(subject.all_authors).to be_an Array
+              end
+
+              it 'finds one element' do
+                expect(subject.all_authors.length).to eq 1
+              end
+
+              it 'contains Selenium::WebDriver::Element objects' do
+                subject.all_authors.each do |e|
+                  expect(e).to be_a Selenium::WebDriver::Element
+                end
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'finds 1 element' do
+                expect(subject.visible_posts.length).to eq 1
               end
             end
 
@@ -351,6 +439,26 @@ describe Fora, selenium: true, integration: true, unit: false do
               end
             end
 
+            describe '#all_authors' do
+              it 'is an Array' do
+                expect(subject.all_authors).to be_an Array
+              end
+
+              it 'is empty' do
+                expect(subject.all_authors).to be_empty
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'is empty' do
+                expect(subject.visible_posts).to be_empty
+              end
+            end
+
             describe '#my_replies' do
               it 'is an Array' do
                 expect(subject.my_replies).to be_an Array
@@ -408,6 +516,32 @@ describe Fora, selenium: true, integration: true, unit: false do
             describe '#known_topics' do
               it 'is a Hash' do
                 expect(subject.known_topics).to be_a Hash
+              end
+            end
+
+            describe '#all_authors' do
+              it 'is an Array' do
+                expect(subject.all_authors).to be_an Array
+              end
+
+              it 'finds three elements' do
+                expect(subject.all_authors.length).to eq 3
+              end
+
+              it 'contains Selenium::WebDriver::Element objects' do
+                subject.all_authors.each do |e|
+                  expect(e).to be_a Selenium::WebDriver::Element
+                end
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'finds three elements' do
+                expect(subject.visible_posts.length).to eq 3
               end
             end
 
@@ -474,6 +608,32 @@ describe Fora, selenium: true, integration: true, unit: false do
             describe '#known_topics' do
               it 'is a Hash' do
                 expect(subject.known_topics).to be_a Hash
+              end
+            end
+
+            describe '#all_authors' do
+              it 'is an Array' do
+                expect(subject.all_authors).to be_an Array
+              end
+
+              it 'finds four elements' do
+                expect(subject.all_authors.length).to eq 4
+              end
+
+              it 'contains Selenium::WebDriver::Element objects' do
+                subject.all_authors.each do |e|
+                  expect(e).to be_a Selenium::WebDriver::Element
+                end
+              end
+            end
+
+            describe '#visible_posts' do
+              it 'is an Array' do
+                expect(subject.visible_posts).to be_an Array
+              end
+
+              it 'finds 17 elements' do
+                expect(subject.visible_posts.length).to eq 17
               end
             end
 
