@@ -5,7 +5,7 @@ gem 'selenium-webdriver'
 
 # utilities
 gem 'rake'
-gem 'i18n', '~> 0.7.0'
+gem 'i18n', '~> 1.8.11'
 gem 'activesupport'
 gem 'actionview'
 gem 'curb'
